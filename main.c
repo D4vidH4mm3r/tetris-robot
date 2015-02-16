@@ -7,6 +7,7 @@
 int main(void) {
 	srand(time(NULL));
 	int **b = board_create();
+	int cleared = 0;
 
 	Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
 
@@ -16,6 +17,11 @@ int main(void) {
 		move_print(&best);
 		block_drop(next, best.rot, b, best.col);
 		board_print(b);
+		printf("Dropped\n");
+		sleep(1);
+		cleared += board_collapse(b);
+		board_print(b);
+		printf("Cleared?\n");
 		sleep(1);
 	}
 	return 0;

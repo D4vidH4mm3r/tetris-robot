@@ -4,8 +4,8 @@
 
 int **board_create();
 void board_copy(int **copy, int **board);
-void board_print(int **b);
-int board_collapse(int **b);
+void board_print(int **board);
+int board_collapse(int **board);
 
 int **board_create() {
 	int **b = malloc(BOARD_HEIGHT*sizeof(int *));
@@ -42,4 +42,25 @@ void board_print(int **b) {
 		printf("‾");
 	}
 	printf("\n");
+}
+
+int board_collapse(int **board) {
+	int cleared = 0;
+	for (int row=BOARD_HEIGHT-1; row>=0; row--) {
+		int full=1;
+		for (int col=0; col<BOARD_WIDTH; col++) {
+			if (!board[row][col]) {
+				full = 0;
+			}
+		}
+		if (full) {
+			cleared++;
+			free(board[row]);
+			for (int fall=row; fall>0; fall--) {
+				board[fall] = board[fall-1];
+			}
+			board[0] = calloc(BOARD_WIDTH,sizeof(int));
+		}
+	}
+	return cleared;
 }
