@@ -14,6 +14,7 @@ int score_cleared(int **board);
 int score_bumps(int **board); /* TODO */
 int score_total(int **board);
 Move best_move_rot(int **board, Block *block, int rot);
+Move best_move(int **board, Block *block);
 void move_print(Move *m);
 
 int score_height(int **board) {
@@ -82,6 +83,18 @@ Move best_move_rot(int **board, Block *block, int rot) {
 	}
 	return best;
 	//board_destroy(copy);
+}
+
+Move best_move(int **board, Block *block) {
+	Move best;
+	best.value = -1000;
+	for (int r=0; r<block->nr; r++) {
+		Move best_here = best_move_rot(board, block, r);
+		if (best_here.value > best.value) {
+			best = best_here;
+		}
+	}
+	return best;
 }
 
 void move_print(Move *m) {
