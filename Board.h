@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 int **board_create();
-int **board_copy(int **b);
+void board_copy(int **copy, int **board);
 void board_print(int **b);
 int board_collapse(int **b);
 
@@ -18,15 +18,12 @@ int **board_create() {
 	return b;
 }
 
-int **board_copy(int **b) {
-	int **bc = malloc(BOARD_HEIGHT*sizeof(int *));
+void board_copy(int **copy, int **board) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
-		b[row] = malloc(BOARD_WIDTH*sizeof(int));
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			bc[row][col] = b[row][col];
+			copy[row][col] = board[row][col];
 		}
 	}
-	return bc;
 }
 
 void board_print(int **b) {
