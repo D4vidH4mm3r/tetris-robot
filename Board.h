@@ -2,23 +2,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int board_collapse(Board *b);
-Board *board_copy(Board *b);
-void board_print(Board *b);
-Board *board_create();
-char *board_horizontal_edge;
+int **board_create();
+int **board_copy(int **b);
+void board_print(int **b);
+int board_collapse(int **b);
 
-Board *board_create() {
-	Board *b = NEW(Board);
+int **board_create() {
+	int **b = malloc(BOARD_HEIGHT*sizeof(int *));
 	for (int row=0; row<BOARD_HEIGHT; row++) {
+		b[row] = malloc(BOARD_WIDTH*sizeof(int));
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			*b[row][col] = 0;
+			b[row][col] = 0;
 		}
 	}
 	return b;
 }
 
-void board_print(Board *b) {
+int **board_copy(int **b) {
+	int **bc = malloc(BOARD_HEIGHT*sizeof(int *));
+	for (int row=0; row<BOARD_HEIGHT; row++) {
+		b[row] = malloc(BOARD_WIDTH*sizeof(int));
+		for (int col=0; col<BOARD_WIDTH; col++) {
+			bc[row][col] = b[row][col];
+		}
+	}
+	return bc;
+}
+
+void board_print(int **b) {
 	for (int i=0; i<BOARD_WIDTH+2; i++) {
 		printf("_");
 	}
@@ -26,7 +37,7 @@ void board_print(Board *b) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		printf("|");
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			printf("%d", *b[row][col]);
+			printf("%d", b[row][col]);
 		}
 		printf("|\n");
 	}

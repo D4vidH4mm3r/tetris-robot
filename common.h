@@ -8,7 +8,4 @@
 
 typedef enum {BLUE=1, TEAL, YELLOW, PURPLE, GREEN, RED, WHITE} Color;
 
-typedef char Row[BOARD_WIDTH];
-typedef Row Board[BOARD_HEIGHT];
-
 #endif

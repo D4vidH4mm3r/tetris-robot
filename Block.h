@@ -11,14 +11,14 @@ typedef struct Block_t {
 	char m[4][4][4];
 } Block;
 
-void block_addblock(Block *block, int r, Board *board, int row, int col);
-int  block_touches(Block *block, Board *board);
+void block_addblock(Block *block, int r, int **board, int row, int col);
+int  block_touches(Block *block, int **board);
 
-void block_addblock(Block *block, int r, Board *board, int row, int col) {
+void block_addblock(Block *block, int r, int **board, int row, int col) {
 	for (int i=0; i<4; i++) {
 		for (int j=0; j<4; j++) {
 			if (block->m[r][i][j]) {
-				*board[row+i][col+j] = block->c;
+				board[row+i][col+j] = block->c;
 			}
 		}
 	}
