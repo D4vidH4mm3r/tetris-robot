@@ -11,7 +11,7 @@ int main(void) {
 
 	Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
 
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<100; i++) {
 		Block *next = blocks[rand() % 7];
 		Move best = best_move(b, next);
 		move_print(&best);
