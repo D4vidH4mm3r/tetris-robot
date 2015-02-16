@@ -34,7 +34,34 @@ void board_print(int **b) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		printf("|");
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			printf("%d", b[row][col]);
+			if (b[row][col]) {
+				switch (b[row][col]) {
+					case BLUE:
+						printf("\x1B[34m");
+						break;
+					case TEAL:
+						printf("\x1B[36m");
+						break;
+					case YELLOW:
+						printf("\x1B[33m");
+						break;
+					case MAGENTA:
+						printf("\x1B[35m");
+						break;
+					case GREEN:
+						printf("\x1B[32m");
+						break;
+					case RED:
+						printf("\x1B[31m");
+						break;
+					case WHITE:
+						printf("\x1B[37m");
+						break;
+				}
+				printf("#\x1B[0m");
+			} else {
+				printf(" ");
+			}
 		}
 		printf("|\n");
 	}
