@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <limits.h>
 #ifndef _ai_def
 #define _ai_def
 
@@ -11,7 +12,7 @@ typedef struct Move_t {
 int score_height(int **board);
 int score_holes(int **board);
 int score_cleared(int **board);
-int score_bumps(int **board); /* TODO */
+int score_bumps(int **board);
 int score_total(int **board);
 Move best_move_rot(int **board, Block *block, int rot);
 Move best_move(int **board, Block *block);
@@ -62,15 +63,34 @@ int score_cleared(int **board) {
 	return cleared;
 }
 
+int score_bumps(int **board) {
+	int block_seen[BOARD_WIDTH] = {0};
+	for (int row=0; row<BOARD_HEIGHT; row++) {
+		for (int col=0; col<BOARD_WIDTH; col++) {
+			if (!block_seen[col] && board[row][col]) {
+				block_seen[col] = row;
+			}
+		}
+	}
+	int bumps = 0;
+	for (int col=0; col<BOARD_WIDTH-1; col++) {
+		bumps += abs(block_seen[col] - block_seen[col+1]);
+	}
+	return bumps;
+}
+
 int score_total(int **board) {
 	/* here, weighting is important; higher is better */
-	return score_cleared(board)*10 - score_holes(board)*15 - score_height(board)*5;
+	return score_cleared(board)*10
+		- score_holes(board)*5
+		- score_height(board)*10
+		- score_bumps(board)*3;
 }
 
 Move best_move_rot(int **board, Block *block, int rot) {
 	int **copy = board_create();
 	Move best;
-	best.value = -1000;
+	best.value = INT_MIN;
 	for (int col=0; col<BOARD_WIDTH-block->w[rot]; col++) {
 		board_copy(copy, board);
 		block_drop(block, rot, copy, col);
@@ -87,7 +107,7 @@ Move best_move_rot(int **board, Block *block, int rot) {
 
 Move best_move(int **board, Block *block) {
 	Move best;
-	best.value = -1000;
+	best.value = INT_MIN;
 	for (int r=0; r<block->nr; r++) {
 		Move best_here = best_move_rot(board, block, r);
 		if (best_here.value > best.value) {
