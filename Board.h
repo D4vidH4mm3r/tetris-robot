@@ -1,1 +1,1 @@
-typedef Board Row[BOARD_HEIGHT];
+int board_collapse(Board *b);
