@@ -9,9 +9,8 @@ bin/ai_demo: ai_demo.c $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo
 
 bin/play: play.c $(OBJS)
-	$(CC) $(CFLAGS) Board.o play.c -o bin/play $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) play.c -o bin/play $(LDFLAGS)
 
 clean:
 	rm -f *.o
-	rm -f grab
-	rm -f main
+	rm -f bin/*

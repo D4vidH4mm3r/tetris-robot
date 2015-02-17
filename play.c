@@ -1,9 +1,11 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "common.h"
 #include "Board.h"
-#include <unistd.h>
+#include "Block.h"
+#include "AI.h"
 
 Color color_guess(XColor *c) {
 	int low = 8000;
@@ -146,19 +148,35 @@ void color_print(Color c) {
 }
 
 int main(int argc, char const *argv[]) {
-	Corners gameboard = {502, 341, 1058, 32};
-	Corners curr_block = {502, 186, 533, 156};
-	Corners next_block = {568, 438, 570, 436};
+	Corners curr_block = {218, 1792, 237, 1776};
+	Corners next_block = {260, 1975, 264, 1971};
 
 	Display *display = XOpenDisplay(NULL);
 
+	Block *blocks[8] = {NULL, &block_Lr, &block_Zr, &block_O, &block_L, &block_I, &block_T, &block_Z};
+	Block *queue[2] = {0, 0};
+
+	Color first = 0;
+	Color next;
+	while (!first) {
+		first = guess_color_area(curr_block, display);
+	}
+	queue[0] = blocks[first];
+
 	while (1) {
-		Color next = guess_color_area(next_block, display);
-		Color curr = guess_color_area(curr_block, display);
-		printf("Next, current:\n");
-		color_print(next);
-		color_print(curr);
+		next = guess_color_area(next_block, display);
+		queue[1] = blocks[next];
+
+		printf("Current:\n");
+		color_print(queue[0]->c);
+
+		printf("Next:\n");
+		color_print(queue[1]->c);
+
 		printf("---------\n");
+
+		queue[0] = queue[1];
+		getchar();
 	}
 	return 0;
 }
