@@ -3,13 +3,13 @@ CFLAGS = -std=c99
 OBJS = Block.o AI.o Board.o
 CC=gcc
 
-all: main
+all: bin/ai_demo bin/play
 
-main: main.c $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) main.c -o main
+bin/ai_demo: ai_demo.c $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo
 
-grab: grab.c Board.o
-	$(CC) $(CFLAGS) Board.o grab.c -o grab $(LDFLAGS)
+bin/play: play.c $(OBJS)
+	$(CC) $(CFLAGS) Board.o play.c -o bin/play $(LDFLAGS)
 
 clean:
 	rm -f *.o
