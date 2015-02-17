@@ -1,3 +1,5 @@
+#ifndef _block_h
+#define _block_h
 #include "common.h"
 #include "Board.h"
 #include <stdlib.h>
@@ -214,3 +216,4 @@ Block block_Zr = {
 			{0,1,0,0},
 			{0,0,0,0}}}
 };
+#endif

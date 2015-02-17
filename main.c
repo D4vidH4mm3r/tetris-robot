@@ -10,19 +10,26 @@ int main(void) {
 	int cleared = 0;
 
 	Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
+	Block *queue = malloc(2*sizeof(Block));
+	queue[0] = *blocks[rand() % 7];
 
 	for (int i=0; i<100; i++) {
-		Block *next = blocks[rand() % 7];
-		Move best = best_move(b, next);
-		move_print(&best);
-		block_drop(next, best.rot, b, best.col);
+		queue[1] = *blocks[rand() % 7];
+
+		Move *best = move_best(b, queue);
+		move_print(best);
+
+		move_execute(best, b);
 		board_print(b);
 		printf("Dropped\n");
 		sleep(1);
+
 		cleared += board_collapse(b);
 		board_print(b);
 		printf("Cleared?\n");
 		sleep(1);
+
+		queue[0] = queue[1];
 	}
 	return 0;
 }

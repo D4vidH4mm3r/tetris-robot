@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <float.h>
+#include "common.h"
+#include "Block.h"
 #ifndef _ai_def
 #define _ai_def
 
 typedef struct Move_t {
+	Block *block;
 	double value;
 	int rot;
 	int col;
+	struct Move_t *prev;
 } Move;
 
 long score_height(int **board);
@@ -14,7 +18,8 @@ long score_holes(int **board);
 long score_cleared(int **board);
 long score_bumps(int **board);
 double score_total(int **board);
-Move best_move(int **board, Block *block);
+Move *move_best(int **board, Block *blocks);
+void move_execute(Move *move, int **board);
 void move_print(Move *m);
 
 long score_height(int **board) {
@@ -95,22 +100,28 @@ double score_total(int **board) {
 		+ score_bumps(board)*(-0.24077);
 }
 
-Move best_move(int **board, Block *block) {
+void move_execute(Move *move, int **board) {
+	block_drop(move->block, move->rot, board, move->col);
+}
+
+Move *move_best(int **board, Block *block) {
 	int **copy = board_create();
-	Move best;
-	best.value = -DBL_MAX;
+	Move *best = NEW(Move);;
+	best->value = -DBL_MAX;
+	best->block = block;
 	for (int rot=0; rot<block->nr; rot++) {
 		for (int col=0; col<BOARD_WIDTH-block->w[rot]+1; col++) {
 			board_copy(copy, board);
 			block_drop(block, rot, copy, col);
 			double score = score_total(copy);
-			if (score > best.value) {
-				best.value = score;
-				best.col = col;
-				best.rot = rot;
+			if (score > best->value) {
+				best->value = score;
+				best->col = col;
+				best->rot = rot;
 			}
 		}
 	}
+	printf("Move_best returning\n");
 	return best;
 }
 
