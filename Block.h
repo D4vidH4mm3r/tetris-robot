@@ -6,7 +6,7 @@
 
 typedef struct Block_t {
 	int nr; /* number of rotation */
-	int w[4]; /* width; last index w. 1 per rotation */
+	int w[4]; /* width of rotation */
 	Color c;
 	char m[4][4][4];
 } Block;
@@ -53,7 +53,7 @@ void block_drop(Block *block, int rot, int **board, int col) {
 
 Block block_I = {
 	2,
-	{3, 0, 0, 0},
+	{4, 1, 0, 0},
 	GREEN,
 	{
 		{
@@ -71,7 +71,7 @@ Block block_I = {
 
 Block block_T = {
 	4,
-	{2, 1, 2, 1},
+	{3, 2, 3, 2},
 	RED,
 	{
 		{
@@ -103,7 +103,7 @@ Block block_T = {
 
 Block block_L = {
 	4,
-	{1, 2, 1, 2},
+	{2, 3, 2, 3},
 	MAGENTA,
 	{
 		{
@@ -135,7 +135,7 @@ Block block_L = {
 
 Block block_Lr = {
 	4,
-	{1, 2, 1, 2},
+	{2, 3, 2, 3},
 	BLUE,
 	{
 		{
@@ -167,7 +167,7 @@ Block block_Lr = {
 
 Block block_O = {
 	1,
-	{1, 0, 0, 0},
+	{2, 0, 0, 0},
 	YELLOW,
 	{
 		{
@@ -181,7 +181,7 @@ Block block_O = {
 
 Block block_Z = {
 	2,
-	{2, 1, 0, 0},
+	{3, 2, 0, 0},
 	WHITE,
 	{
 		{
@@ -199,7 +199,7 @@ Block block_Z = {
 
 Block block_Zr = {
 	2,
-	{2, 1, 0, 0},
+	{3, 2, 0, 0},
 	TEAL,
 	{
 		{
@@ -214,4 +214,3 @@ Block block_Zr = {
 			{0,1,0,0},
 			{0,0,0,0}}}
 };
-
