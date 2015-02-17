@@ -18,16 +18,22 @@ Move best_move(int **board, Block *block);
 void move_print(Move *m);
 
 long score_height(int **board) {
-	int block_seen[BOARD_WIDTH] = {0};
+	int block_seen[BOARD_WIDTH];
+	for (int i=0; i<BOARD_WIDTH; i++) {
+		block_seen[i] = BOARD_HEIGHT;
+	}
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			if (!block_seen[col] && board[row][col]) {
+			if ((row < block_seen[col]) && board[row][col]) {
 				block_seen[col] = row;
 			}
 		}
 	}
-	int height = 0;
-	for (int col=0; col<BOARD_WIDTH-1; col++) {
+	for (int col=0; col<BOARD_WIDTH; col++) {
+		printf("Col %d was %d\n", col, block_seen[col]);
+	}
+	long height = 0;
+	for (int col=0; col<BOARD_WIDTH; col++) {
 		height += (BOARD_HEIGHT-block_seen[col]);
 	}
 	return height;

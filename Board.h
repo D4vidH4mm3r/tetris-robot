@@ -28,7 +28,7 @@ void board_copy(int **copy, int **board) {
 
 void board_print(int **b) {
 	for (int i=0; i<BOARD_WIDTH+2; i++) {
-		printf("_");
+		printf("-");
 	}
 	printf("\n");
 	for (int row=0; row<BOARD_HEIGHT; row++) {
@@ -66,7 +66,7 @@ void board_print(int **b) {
 		printf("|\n");
 	}
 	for (int i=0; i<BOARD_WIDTH+2; i++) {
-		printf("‾");
+		printf("-");
 	}
 	printf("\n");
 }
