@@ -1,4 +1,6 @@
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/extensions/XTest.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -147,9 +149,41 @@ void color_print(Color c) {
 	}
 }
 
+void move_send(Move *move, Display *display) {
+	/* xmodmap -pke er nyttig */
+	unsigned int k_space = 65;
+	unsigned int k_left = 113;
+	unsigned int k_right = 114;
+	unsigned int k_up = 111;
+
+	/* rotate */
+	for (int i=0; i<move->rot; i++) {
+		XTestFakeKeyEvent(display, k_up, True, 0);
+		XTestFakeKeyEvent(display, k_up, False, 100);
+	}
+
+	int moves_right = move->rot - move->block->offset[move->rot];
+	if (moves_right > 0) {
+		for (int i=0; i<moves_right; i++) {
+			XTestFakeKeyEvent(display, k_right, True, 0);
+			XTestFakeKeyEvent(display, k_right, False, 100);
+		}
+	} else {
+		for (int i=0; i<(-moves_right); i++) {
+			XTestFakeKeyEvent(display, k_left, True, 0);
+			XTestFakeKeyEvent(display, k_left, False, 100);
+		}
+	}
+	XTestFakeKeyEvent(display, k_space, True, 0);
+	XTestFakeKeyEvent(display, k_space, False, 100);
+	XFlush(display);
+}
+
 int main(int argc, char const *argv[]) {
 	Corners curr_block = {218, 1792, 237, 1776};
 	Corners next_block = {260, 1975, 264, 1971};
+
+	int **board = board_create();
 
 	Display *display = XOpenDisplay(NULL);
 
@@ -172,11 +206,16 @@ int main(int argc, char const *argv[]) {
 
 		printf("Next:\n");
 		color_print(queue[1]->c);
-
 		printf("---------\n");
 
+		Move *best = move_best_lookahead(board, queue[0], queue[1]);
+		move_execute(best, board);
+		move_send(best, display);
+		move_destroy(best);
+		board_print(board);
+
 		queue[0] = queue[1];
-		getchar();
+		sleep(1);
 	}
 	return 0;
 }

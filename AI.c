@@ -87,6 +87,7 @@ Move *move_best(int **board, Block *block) {
 	Move *best = NEW(Move);;
 	best->value = -DBL_MAX;
 	best->block = block;
+	printf("move_best has block: %d\n", block->c);
 	for (int rot=0; rot<block->nr; rot++) {
 		for (int col=0; col<BOARD_WIDTH-block->w[rot]+1; col++) {
 			board_copy(copy, board);
@@ -132,11 +133,12 @@ MoveSet *move_all(Block *block) {
 	return ms;
 }
 
-Move *move_best_lookahead(int **board, Block *blocks) {
-	MoveSet *first_moves = move_all(&blocks[0]); // all moves with first block
+Move *move_best_lookahead(int **board, Block *current, Block *next) {
+	MoveSet *first_moves = move_all(current); // all moves with first block
 	Move *best = NEW(Move); // best move with second block
+	printf("%p\n", best);
 	best->value = -DBL_MAX;
-	best->block = &blocks[1];
+	best->block = next;
 
 	int **copy = board_create();
 
@@ -145,14 +147,17 @@ Move *move_best_lookahead(int **board, Block *blocks) {
 		Move *current = &first_moves->moves[i];
 		move_execute(current, copy);
 		Move *best_next = move_best(copy, best->block);
+		printf("%f\n", best_next->value);
 		if (best_next->value > best->value) {
+			printf("Update\n");
 			move_copy(best, best_next);
 			best->prev = current;
 		}
 	}
 
+	printf("%p\n", best->prev);
 	move_copy(best, best->prev);
-	moveset_destroy(first_moves);
+	//moveset_destroy(first_moves);
 	//board_destroy(copy);
 	return best;
 }

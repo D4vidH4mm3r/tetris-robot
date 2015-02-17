@@ -1,4 +1,4 @@
-LDFLAGS = -L/usr/include -lX11
+LDFLAGS = -L/usr/include -lX11 -lXtst
 CFLAGS = -std=c99
 OBJS = Block.o AI.o Board.o
 CC=gcc

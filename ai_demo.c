@@ -20,7 +20,7 @@ int main(void) {
 	while (1) {
 		queue[1] = *blocks[random_blockno()];
 
-		Move *best = move_best_lookahead(b, queue);
+		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
 		//move_print(best);
 		move_execute(best, b);
 

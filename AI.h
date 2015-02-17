@@ -28,7 +28,7 @@ double score_total(int **board);
 
 Move *move_best(int **board, Block *blocks);
 MoveSet *move_all(Block *block);
-Move *move_best_lookahead(int **board, Block *blocks);
+Move *move_best_lookahead(int **board, Block *current, Block *next);
 void move_copy(Move *to, Move *from);
 
 void move_execute(Move *move, int **board);
