@@ -29,9 +29,6 @@ long score_height(int **board) {
 			}
 		}
 	}
-	for (int col=0; col<BOARD_WIDTH; col++) {
-		printf("Col %d was %d\n", col, block_seen[col]);
-	}
 	long height = 0;
 	for (int col=0; col<BOARD_WIDTH; col++) {
 		height += (BOARD_HEIGHT-block_seen[col]);
