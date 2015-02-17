@@ -4,14 +4,6 @@
 #include "common.h"
 #include "Board.h"
 
-void get_pixel_color (Display *d, int x, int y, XColor *color) {
-	XImage *image;
-	image = XGetImage(d, RootWindow (d, DefaultScreen (d)), x, y, 1, 1, AllPlanes, XYPixmap);
-	color->pixel = XGetPixel(image, 0, 0);
-	XFree (image);
-	XQueryColor (d, DefaultColormap(d, DefaultScreen (d)), color);
-}
-
 Color color_guess(XColor *c) {
 	int low = 8000;
 	int mid = 20000;
@@ -50,29 +42,67 @@ Color color_guess(XColor *c) {
 	}
 }
 
+typedef struct Corners_t {
+	int north;
+	int east;
+	int south;
+	int west;
+} Corners;
+
+typedef struct Point_t {
+	int x;
+	int y;
+} Point;
+
+XImage *take_some_image(Corners c, Display *d) {
+	XImage *image = XGetImage(d,
+			RootWindow(d, DefaultScreen(d)),
+			c.west,
+			c.north,
+			(c.east-c.west),
+			(c.south-c.north),
+			AllPlanes,
+			XYPixmap);
+	return image;
+}
+
+void copy_to_board(Corners c, Display *d, int **board) {
+	XImage *image = take_some_image(c, d);
+	XColor color;
+
+	int xstep = (c.east - c.west)/BOARD_WIDTH;
+	int ystep = (c.south - c.north)/BOARD_HEIGHT;
+
+	for (int row=0; row<BOARD_HEIGHT; row++) {
+		int y = row*ystep + ystep/2;
+
+		for (int col=0; col<BOARD_WIDTH; col++) {
+			int x = col*xstep + xstep/2;
+
+			color.pixel = XGetPixel(image, x, y);
+			XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
+			board[row][col] = color_guess(&color);
+		}
+	}
+	XFree(image);
+}
+
+Point center(Corners c) {
+	Point res = {
+		c.west  + (c.east-c.west)/2,
+		c.north + (c.south-c.north)/2
+	};
+}
+
 int main(int argc, char const *argv[]) {
-	int w_x=205;
-	int n_y=260;
-	int e_x=459;
-	int s_y=716;
-	int numcols = 10;
-	int numrows = 18;
-	int xstep = (e_x - w_x)/numcols;
-	int ystep = (s_y - n_y)/numrows;
+	Corners gameboard = {502, 341, 1058, 32};
+	Corners curr_block = {502, 186, 533, 156};
 
 	int **b = board_create();
 
-	printf("Step sizes: %d and %d\n", xstep, ystep);
-	XColor c;
 	Display *display = XOpenDisplay(NULL);
-	for (int row=0; row<numrows; row++) {
-		int y = n_y + row*ystep + ystep/2;
-		for (int col=0; col<numcols; col++) {
-			int x = w_x + col*xstep + xstep/2;
-			get_pixel_color(display, x, y, &c);
-			b[row][col] = color_guess(&c);
-		}
-	}
+	board_print(b);
+	copy_to_board(gameboard, display, b);
 	board_print(b);
 	return 0;
 }
