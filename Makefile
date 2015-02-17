@@ -1,7 +1,8 @@
-LDFLAGS=-lncurses
-CFLAGS=-std=c99
+LDFLAGS=-L/usr/include -lX11 
+CFLAGS=-std=c99 
+CC=gcc
 
 all: main
 
 grab: grab.c
-	gcc grab.c -L/usr/include -lX11 -o grab
+	$(CC) $(CFLAGS) grab.c -o grab $(LDFLAGS)

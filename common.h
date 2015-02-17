@@ -4,7 +4,7 @@
 #define NEW(thing) malloc(sizeof(thing))
 
 #define BOARD_WIDTH 10
-#define BOARD_HEIGHT 21
+#define BOARD_HEIGHT 18
 
 typedef enum {BLUE=1, TEAL, YELLOW, MAGENTA, GREEN, RED, WHITE} Color;
 
