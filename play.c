@@ -158,23 +158,24 @@ void move_send(Move *move, Display *display) {
 
 	/* rotate */
 	for (int i=0; i<move->rot; i++) {
-		XTestFakeKeyEvent(display, k_up, True, 0);
+		XTestFakeKeyEvent(display, k_up, True, 50);
 		XTestFakeKeyEvent(display, k_up, False, 100);
 	}
 
-	int moves_right = move->rot - move->block->offset[move->rot];
+	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
 		for (int i=0; i<moves_right; i++) {
-			XTestFakeKeyEvent(display, k_right, True, 0);
+			XTestFakeKeyEvent(display, k_right, True, 50);
 			XTestFakeKeyEvent(display, k_right, False, 100);
 		}
 	} else {
 		for (int i=0; i<(-moves_right); i++) {
-			XTestFakeKeyEvent(display, k_left, True, 0);
+			XTestFakeKeyEvent(display, k_left, True, 50);
 			XTestFakeKeyEvent(display, k_left, False, 100);
 		}
 	}
-	XTestFakeKeyEvent(display, k_space, True, 0);
+	move_print(move);
+	XTestFakeKeyEvent(display, k_space, True, 50);
 	XTestFakeKeyEvent(display, k_space, False, 100);
 	XFlush(display);
 }
@@ -209,13 +210,15 @@ int main(int argc, char const *argv[]) {
 		printf("---------\n");
 
 		Move *best = move_best_lookahead(board, queue[0], queue[1]);
+		move_print(best);
 		move_execute(best, board);
 		move_send(best, display);
 		move_destroy(best);
+		board_collapse(board);
 		board_print(board);
 
 		queue[0] = queue[1];
-		sleep(1);
+		sleep(2);
 	}
 	return 0;
 }
