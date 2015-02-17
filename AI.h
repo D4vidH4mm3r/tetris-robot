@@ -13,6 +13,12 @@ typedef struct Move_t {
 	struct Move_t *prev;
 } Move;
 
+typedef struct MoveSet_t {
+	Block *block;
+	int length;
+	Move *moves;
+} MoveSet;
+
 long score_height(int **board);
 long score_holes(int **board);
 long score_cleared(int **board);
@@ -21,6 +27,7 @@ double score_total(int **board);
 Move *move_best(int **board, Block *blocks);
 void move_execute(Move *move, int **board);
 void move_print(Move *m);
+MoveSet *move_all(Block *block);
 
 long score_height(int **board) {
 	int block_seen[BOARD_WIDTH];
@@ -123,6 +130,19 @@ Move *move_best(int **board, Block *block) {
 	}
 	printf("Move_best returning\n");
 	return best;
+}
+
+MoveSet *move_all(Block *block) {
+	MoveSet *ms = NEW(MoveSet);
+	int length = 0;
+	for (int rot=0; rot<block->nr; rot++) {
+		int trycols = BOARD_WIDTH-block->w[rot]+1;
+		length += trycols;
+	}
+	ms->length = length;
+	ms->moves = malloc(length*sizeof(Move));
+	ms->block = block;
+	return ms;
 }
 
 void move_print(Move *m) {
