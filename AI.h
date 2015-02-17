@@ -28,6 +28,7 @@ double score_total(int **board);
 Move *move_best(int **board, Block *blocks);
 MoveSet *move_all(Block *block);
 Move *move_best_lookahead(int **board, Block *blocks);
+void move_copy(Move *to, Move *from);
 
 void move_execute(Move *move, int **board);
 void move_print(Move *m);
@@ -134,25 +135,68 @@ Move *move_best(int **board, Block *block) {
 			}
 		}
 	}
-	printf("Move_best returning\n");
 	return best;
 }
 
 MoveSet *move_all(Block *block) {
+	/* NOTE: angiver ikke korrekt value */
 	MoveSet *ms = NEW(MoveSet);
 	int length = 0;
+
 	for (int rot=0; rot<block->nr; rot++) {
 		int trycols = BOARD_WIDTH-block->w[rot]+1;
 		length += trycols;
 	}
+
 	ms->length = length;
 	ms->moves = malloc(length*sizeof(Move));
 	ms->block = block;
+
+	int moveno = 0;
+	for (int rot=0; rot<block->nr; rot++) {
+		int trycols = BOARD_WIDTH-block->w[rot]+1;
+		for (int col=0; col<trycols; col++) {
+			Move *current = &ms->moves[moveno];
+			current->col = col;
+			current->rot = rot;
+			current->block = block;
+			current->value = 0;
+			moveno++;
+		}
+	}
 	return ms;
 }
 
 Move *move_best_lookahead(int **board, Block *blocks) {
-	
+	MoveSet *first_moves = move_all(&blocks[0]); // all moves with first block
+	Move *best = NEW(Move); // best move with second block
+	best->value = -DBL_MAX;
+	best->block = &blocks[1];
+
+	int **copy = board_create();
+
+	for (int i=0; i<first_moves->length; i++) {
+		board_copy(copy, board);
+		Move *current = &first_moves->moves[i];
+		move_execute(current, copy);
+		Move *best_next = move_best(copy, best->block);
+		if (best_next->value > best->value) {
+			move_copy(best, best_next);
+			best->prev = current;
+		}
+	}
+
+	move_copy(best, best->prev);
+	moveset_destroy(first_moves);
+	return best;
+}
+
+void move_copy(Move *to, Move *from) {
+	to->block = from->block;
+	to->value = from->value;
+	to->rot   = from->rot;
+	to->col   = from->col;
+	to->prev  = from->prev;
 }
 
 void move_print(Move *m) {
@@ -164,9 +208,6 @@ void move_destroy(Move *move) {
 }
 
 void moveset_destroy(MoveSet *moves) {
-	for (int i=0; i<moves->length; i++) {
-		free(moves->moves);
-	}
 	free(moves);
 }
 

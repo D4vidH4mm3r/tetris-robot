@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+int random_blockno() {
+	return rand() % 7;
+}
+
 int main(void) {
 	srand(time(NULL));
 	int **b = board_create();
@@ -11,15 +15,15 @@ int main(void) {
 
 	Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
 	Block *queue = malloc(2*sizeof(Block));
-	queue[0] = *blocks[rand() % 7];
+	queue[0] = *blocks[random_blockno()];
 
 	for (int i=0; i<100; i++) {
-		queue[1] = *blocks[rand() % 7];
+		queue[1] = *blocks[random_blockno()];
 
-		Move *best = move_best(b, queue);
+		Move *best = move_best_lookahead(b, queue);
 		move_print(best);
-
 		move_execute(best, b);
+
 		move_destroy(best);
 
 		board_print(b);
