@@ -5,6 +5,7 @@
 int **board_create();
 void board_copy(int **copy, int **board);
 void board_print(int **board);
+void board_destroy(int **board);
 int board_collapse(int **board);
 
 int **board_create() {
@@ -91,4 +92,11 @@ int board_collapse(int **board) {
 		}
 	}
 	return cleared;
+}
+
+void board_destroy(int **board) {
+	for (int row=0; row<BOARD_HEIGHT; row++) {
+		free(board[row]);
+	}
+	free(board);
 }
