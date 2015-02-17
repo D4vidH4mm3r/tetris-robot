@@ -10,6 +10,7 @@
 typedef struct Block_t {
 	int nr; /* number of rotation */
 	int w[4]; /* width of rotation */
+	int offset[4]; /* shifts from left start */
 	Color c;
 	char m[4][4][4];
 } Block;
