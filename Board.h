@@ -87,6 +87,7 @@ int board_collapse(int **board) {
 				board[fall] = board[fall-1];
 			}
 			board[0] = calloc(BOARD_WIDTH,sizeof(int));
+			row++;
 		}
 	}
 	return cleared;
