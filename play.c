@@ -158,25 +158,25 @@ void move_send(Move *move, Display *display) {
 
 	/* rotate */
 	for (int i=0; i<move->rot; i++) {
-		XTestFakeKeyEvent(display, k_up, True, 50);
-		XTestFakeKeyEvent(display, k_up, False, 100);
+		XTestFakeKeyEvent(display, k_up, True, 10);
+		XTestFakeKeyEvent(display, k_up, False, 10);
 	}
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
 		for (int i=0; i<moves_right; i++) {
-			XTestFakeKeyEvent(display, k_right, True, 50);
-			XTestFakeKeyEvent(display, k_right, False, 100);
+			XTestFakeKeyEvent(display, k_right, True, 10);
+			XTestFakeKeyEvent(display, k_right, False, 10);
 		}
 	} else {
 		for (int i=0; i<(-moves_right); i++) {
-			XTestFakeKeyEvent(display, k_left, True, 50);
-			XTestFakeKeyEvent(display, k_left, False, 100);
+			XTestFakeKeyEvent(display, k_left, True, 10);
+			XTestFakeKeyEvent(display, k_left, False, 10);
 		}
 	}
 	move_print(move);
-	XTestFakeKeyEvent(display, k_space, True, 50);
-	XTestFakeKeyEvent(display, k_space, False, 100);
+	XTestFakeKeyEvent(display, k_space, True, 10);
+	XTestFakeKeyEvent(display, k_space, False, 10);
 	XFlush(display);
 }
 
@@ -218,7 +218,7 @@ int main(int argc, char const *argv[]) {
 		board_print(board);
 
 		queue[0] = queue[1];
-		sleep(2);
+		sleep(1);
 	}
 	return 0;
 }
