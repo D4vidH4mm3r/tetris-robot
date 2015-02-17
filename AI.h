@@ -1,9 +1,9 @@
+#ifndef _ai_def
+#define _ai_def
 #include <stdio.h>
 #include <float.h>
 #include "common.h"
 #include "Block.h"
-#ifndef _ai_def
-#define _ai_def
 
 typedef struct Move_t {
 	Block *block;

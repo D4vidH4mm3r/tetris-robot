@@ -13,9 +13,9 @@ typedef struct Block_t {
 	char m[4][4][4];
 } Block;
 
-void block_addblock(Block *block, int rot, int **board, int row, int col);
-int  block_touches(Block *block, int rot, int **board, int row, int col);
+int block_touches(Block *block, int rot, int **board, int row, int col);
 int block_hits_row(Block *block, int rot, int **board, int col);
+void block_addblock(Block *block, int rot, int **board, int row, int col);
 void block_drop(Block *block, int rot, int **board, int col);
 
 void block_addblock(Block *block, int rot, int **board, int row, int col) {

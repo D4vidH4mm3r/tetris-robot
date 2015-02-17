@@ -1,3 +1,5 @@
+#ifndef _board_h
+#define _board_h
 #include "common.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +9,7 @@ void board_copy(int **copy, int **board);
 void board_print(int **board);
 void board_destroy(int **board);
 int board_collapse(int **board);
+int board_dead(int **board);
 
 int **board_create() {
 	int **b = malloc(BOARD_HEIGHT*sizeof(int *));
@@ -94,9 +97,19 @@ int board_collapse(int **board) {
 	return cleared;
 }
 
+int board_dead(int **board) {
+	for (int col=0; col<BOARD_WIDTH; col++) {
+		if (board[0][col]) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void board_destroy(int **board) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		free(board[row]);
 	}
 	free(board);
 }
+#endif

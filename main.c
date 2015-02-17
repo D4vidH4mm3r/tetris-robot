@@ -17,23 +17,23 @@ int main(void) {
 	Block *queue = malloc(2*sizeof(Block));
 	queue[0] = *blocks[random_blockno()];
 
-	for (int i=0; i<100; i++) {
+	while (1) {
 		queue[1] = *blocks[random_blockno()];
 
 		Move *best = move_best_lookahead(b, queue);
-		move_print(best);
+		//move_print(best);
 		move_execute(best, b);
 
 		move_destroy(best);
 
-		board_print(b);
-		printf("Dropped\n");
-		sleep(1);
-
+		if (board_dead(b)) {
+			board_print(b);
+			printf("Dead :(\n");
+			break;
+		}
 		cleared += board_collapse(b);
-		board_print(b);
-		printf("Cleared?\n");
-		sleep(1);
+		//board_print(b);
+		printf("%d cleared\n", cleared);
 
 		queue[0] = queue[1];
 	}
