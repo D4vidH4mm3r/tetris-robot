@@ -24,10 +24,16 @@ long score_holes(int **board);
 long score_cleared(int **board);
 long score_bumps(int **board);
 double score_total(int **board);
+
 Move *move_best(int **board, Block *blocks);
+MoveSet *move_all(Block *block);
+Move *move_best_lookahead(int **board, Block *blocks);
+
 void move_execute(Move *move, int **board);
 void move_print(Move *m);
-MoveSet *move_all(Block *block);
+
+void move_destroy(Move *move);
+void moveset_destroy(MoveSet *moves);
 
 long score_height(int **board) {
 	int block_seen[BOARD_WIDTH];
@@ -145,8 +151,23 @@ MoveSet *move_all(Block *block) {
 	return ms;
 }
 
+Move *move_best_lookahead(int **board, Block *blocks) {
+	
+}
+
 void move_print(Move *m) {
 	printf("Rotate %d times and drop col %d for %f value\n", m->rot, m->col, m->value);
+}
+
+void move_destroy(Move *move) {
+	free(move);
+}
+
+void moveset_destroy(MoveSet *moves) {
+	for (int i=0; i<moves->length; i++) {
+		free(moves->moves);
+	}
+	free(moves);
 }
 
 #endif

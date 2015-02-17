@@ -20,6 +20,8 @@ int main(void) {
 		move_print(best);
 
 		move_execute(best, b);
+		move_destroy(best);
+
 		board_print(b);
 		printf("Dropped\n");
 		sleep(1);
