@@ -3,6 +3,7 @@
 #include <string.h>
 #include "common.h"
 #include "Board.h"
+#include <unistd.h>
 
 Color color_guess(XColor *c) {
 	int low = 8000;
@@ -87,6 +88,28 @@ void copy_to_board(Corners c, Display *d, int **board) {
 	XFree(image);
 }
 
+Color guess_color_area(Corners c, Display *d) {
+	XImage *image = take_some_image(c, d);
+	XColor color;
+
+	int width = (c.east-c.west);
+	int height = (c.south-c.north);
+
+	for (int y=0; y<height; y++) {
+		for (int x=0; x<width; x++) {
+			color.pixel = XGetPixel(image, x, y);
+			XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
+			Color guess = color_guess(&color);
+			if (guess) {
+				XFree(image);
+				return guess;
+			}
+		}
+	}
+	XFree(image);
+	return 0;
+}
+
 Point center(Corners c) {
 	Point res = {
 		c.west  + (c.east-c.west)/2,
@@ -94,15 +117,48 @@ Point center(Corners c) {
 	};
 }
 
+void color_print(Color c) {
+	switch (c) {
+		case TEAL:
+			printf("TEAL\n");
+			break;
+		case RED:
+			printf("RED\n");
+			break;
+		case BLUE:
+			printf("BLUE\n");
+			break;
+		case MAGENTA:
+			printf("MAGENTA\n");
+			break;
+		case GREEN:
+			printf("GREEN\n");
+			break;
+		case YELLOW:
+			printf("YELLOW\n");
+			break;
+		case WHITE:
+			printf("WHITE\n");
+			break;
+		default:
+			printf("None...\n");
+	}
+}
+
 int main(int argc, char const *argv[]) {
 	Corners gameboard = {502, 341, 1058, 32};
 	Corners curr_block = {502, 186, 533, 156};
-
-	int **b = board_create();
+	Corners next_block = {568, 438, 570, 436};
 
 	Display *display = XOpenDisplay(NULL);
-	board_print(b);
-	copy_to_board(gameboard, display, b);
-	board_print(b);
+
+	while (1) {
+		Color next = guess_color_area(next_block, display);
+		Color curr = guess_color_area(curr_block, display);
+		printf("Next, current:\n");
+		color_print(next);
+		color_print(curr);
+		printf("---------\n");
+	}
 	return 0;
 }
