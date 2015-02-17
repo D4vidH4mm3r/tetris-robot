@@ -14,7 +14,6 @@ long score_holes(int **board);
 long score_cleared(int **board);
 long score_bumps(int **board);
 double score_total(int **board);
-Move best_move_rot(int **board, Block *block, int rot);
 Move best_move(int **board, Block *block);
 void move_print(Move *m);
 
@@ -90,31 +89,20 @@ double score_total(int **board) {
 		+ score_bumps(board)*(-0.24077);
 }
 
-Move best_move_rot(int **board, Block *block, int rot) {
+Move best_move(int **board, Block *block) {
 	int **copy = board_create();
 	Move best;
 	best.value = -DBL_MAX;
-	for (int col=0; col<BOARD_WIDTH-block->w[rot]+1; col++) {
-		board_copy(copy, board);
-		block_drop(block, rot, copy, col);
-		int score = score_total(copy);
-		if (score > best.value) {
-			best.value = score;
-			best.col = col;
-			best.rot = rot;
-		}
-	}
-	return best;
-	//board_destroy(copy);
-}
-
-Move best_move(int **board, Block *block) {
-	Move best;
-	best.value = -DBL_MAX;
-	for (int r=0; r<block->nr; r++) {
-		Move best_here = best_move_rot(board, block, r);
-		if (best_here.value > best.value) {
-			best = best_here;
+	for (int rot=0; rot<block->nr; rot++) {
+		for (int col=0; col<BOARD_WIDTH-block->w[rot]+1; col++) {
+			board_copy(copy, board);
+			block_drop(block, rot, copy, col);
+			double score = score_total(copy);
+			if (score > best.value) {
+				best.value = score;
+				best.col = col;
+				best.rot = rot;
+			}
 		}
 	}
 	return best;
