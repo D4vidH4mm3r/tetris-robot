@@ -156,40 +156,42 @@ void move_send(Move *move, Display *display) {
 	unsigned int k_left = 113;
 	unsigned int k_right = 114;
 	unsigned int k_up = 111;
+	int wait_down = 50;
+	int wait_up = 50;
 
 	/* rotate */
 	for (int i=0; i<move->rot; i++) {
-		XTestFakeKeyEvent(display, k_up, True, 50);
-		XTestFakeKeyEvent(display, k_up, False, 50);
+		XTestFakeKeyEvent(display, k_up, True, wait_down);
+		XTestFakeKeyEvent(display, k_up, False, wait_up);
 	}
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
 		for (int i=0; i<moves_right; i++) {
-			XTestFakeKeyEvent(display, k_right, True, 50);
-			XTestFakeKeyEvent(display, k_right, False, 50);
+			XTestFakeKeyEvent(display, k_right, True, wait_down);
+			XTestFakeKeyEvent(display, k_right, False, wait_up);
 		}
 	} else {
 		for (int i=0; i<(-moves_right); i++) {
-			XTestFakeKeyEvent(display, k_left, True, 50);
-			XTestFakeKeyEvent(display, k_left, False, 50);
+			XTestFakeKeyEvent(display, k_left, True, wait_down);
+			XTestFakeKeyEvent(display, k_left, False, wait_up);
 		}
 	}
 	move_print(move);
-	XTestFakeKeyEvent(display, k_space, True, 50);
-	XTestFakeKeyEvent(display, k_space, False, 50);
+	XTestFakeKeyEvent(display, k_space, True, wait_down);
+	XTestFakeKeyEvent(display, k_space, False, wait_up);
 	XFlush(display);
 }
 
 int main(int argc, char const *argv[]) {
 	struct timespec ts;
 	ts.tv_sec=0;
-	ts.tv_nsec=100000000L;
+	ts.tv_nsec=40000000L;
 
-	//Corners curr_block = {218, 1792, 237, 1776};
-	//Corners next_block = {260, 1975, 264, 1971};
-	Corners curr_block = {103, 852, 112, 834};
-	Corners next_block = {134, 1000, 142, 990};
+	Corners curr_block = {218, 1792, 237, 1776};
+	Corners next_block = {260, 1975, 264, 1971};
+	//Corners curr_block = {103, 852, 112, 834};
+	//Corners next_block = {134, 1000, 142, 990};
 
 	Board board = board_create();
 
