@@ -99,7 +99,7 @@ Move *move_best(Board board, Block *block) {
 			}
 		}
 	}
-	//board_destroy(copy);
+	board_destroy(copy);
 	return best;
 }
 
@@ -152,8 +152,8 @@ Move *move_best_lookahead(Board board, Block *current, Block *next) {
 	}
 
 	move_copy(best, best->prev);
-	//moveset_destroy(first_moves);
-	//board_destroy(copy);
+	moveset_destroy(first_moves);
+	board_destroy(copy);
 	return best;
 }
 
