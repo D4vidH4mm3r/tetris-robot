@@ -17,7 +17,7 @@ int main(void) {
 	Block *queue = malloc(2*sizeof(Block));
 	queue[0] = *blocks[random_blockno()];
 
-	for (int i=0; i<10; i++) {
+	for (int i=0; i<2000; i++) {
 		queue[1] = *blocks[random_blockno()];
 
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);

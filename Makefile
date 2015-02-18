@@ -1,5 +1,5 @@
 LDFLAGS = -L/usr/include -lX11 -lXtst
-CFLAGS = -std=c99# -Ofast -march=native -flto -fwhole-program
+CFLAGS = -std=c99 -Ofast -march=native -flto -fwhole-program
 OBJS = Block.o AI.o Board.o
 CC=gcc
 
