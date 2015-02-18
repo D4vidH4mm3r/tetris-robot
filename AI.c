@@ -1,6 +1,6 @@
 #include "AI.h"
 
-long score_height(int **board) {
+long score_height(Board board) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
 		block_seen[i] = BOARD_HEIGHT;
@@ -19,7 +19,7 @@ long score_height(int **board) {
 	return height;
 }
 
-long score_holes(int **board) {
+long score_holes(Board board) {
 	int has_been_block[BOARD_WIDTH] = {0};
 	long holes = 0;
 	for (int row=0; row<BOARD_HEIGHT; row++) {
@@ -34,7 +34,7 @@ long score_holes(int **board) {
 	return holes;
 }
 
-long score_cleared(int **board) {
+long score_cleared(Board board ) {
 	long cleared = 0;
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		int clears = 1;
@@ -50,7 +50,7 @@ long score_cleared(int **board) {
 	return cleared;
 }
 
-long score_bumps(int **board) {
+long score_bumps(Board board) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
 		block_seen[i] = BOARD_HEIGHT;
@@ -70,7 +70,7 @@ long score_bumps(int **board) {
 }
 
 /* values from https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/ */
-double score_total(int **board) {
+double score_total(Board board) {
 	/* here, weighting is important; higher is better */
 	return score_cleared(board)*0.99275
 		+ score_holes(board)*(-0.46544)
@@ -78,12 +78,12 @@ double score_total(int **board) {
 		+ score_bumps(board)*(-0.24077);
 }
 
-void move_execute(Move *move, int **board) {
+void move_execute(Move *move, Board board) {
 	block_drop(move->block, move->rot, board, move->col);
 }
 
-Move *move_best(int **board, Block *block) {
-	int **copy = board_create();
+Move *move_best(Board board, Block *block) {
+	Board copy = board_create();
 	Move *best = NEW(Move);;
 	best->value = -DBL_MAX;
 	best->block = block;
@@ -132,13 +132,13 @@ MoveSet *move_all(Block *block) {
 	return ms;
 }
 
-Move *move_best_lookahead(int **board, Block *current, Block *next) {
+Move *move_best_lookahead(Board board, Block *current, Block *next) {
 	MoveSet *first_moves = move_all(current); // all moves with first block
 	Move *best = NEW(Move); // best move with second block
 	best->value = -DBL_MAX;
 	best->block = next;
 
-	int **copy = board_create();
+	Board copy = board_create();
 
 	for (int i=0; i<first_moves->length; i++) {
 		board_copy(copy, board);

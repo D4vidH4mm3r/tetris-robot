@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int **board_create();
-void board_copy(int **copy, int **board);
-void board_print(int **board);
-void board_destroy(int **board);
-int board_collapse(int **board);
-int board_dead(int **board);
+Board board_create();
+void board_copy(Board copy, Board board);
+void board_print(Board board);
+void board_destroy(Board board);
+int board_collapse(Board board);
+int board_dead(Board board);
 
 #endif

@@ -1,7 +1,7 @@
 #include "Board.h"
 
-int **board_create() {
-	int **b = malloc(BOARD_HEIGHT*sizeof(int *));
+Board board_create() {
+	Board b = malloc(BOARD_HEIGHT*sizeof(int *));
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		b[row] = malloc(BOARD_WIDTH*sizeof(int));
 		for (int col=0; col<BOARD_WIDTH; col++) {
@@ -11,7 +11,7 @@ int **board_create() {
 	return b;
 }
 
-void board_copy(int **copy, int **board) {
+void board_copy(Board copy, Board board) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
 			copy[row][col] = board[row][col];
@@ -19,7 +19,7 @@ void board_copy(int **copy, int **board) {
 	}
 }
 
-void board_print(int **b) {
+void board_print(Board b) {
 	for (int i=0; i<BOARD_WIDTH+2; i++) {
 		printf("-");
 	}
@@ -64,7 +64,7 @@ void board_print(int **b) {
 	printf("\n");
 }
 
-int board_collapse(int **board) {
+int board_collapse(Board board) {
 	int cleared = 0;
 	for (int row=BOARD_HEIGHT-1; row>=0; row--) {
 		int full=1;
@@ -86,7 +86,7 @@ int board_collapse(int **board) {
 	return cleared;
 }
 
-int board_dead(int **board) {
+int board_dead(Board board) {
 	for (int col=0; col<BOARD_WIDTH; col++) {
 		if (board[0][col]) {
 			return 1;
@@ -95,7 +95,7 @@ int board_dead(int **board) {
 	return 0;
 }
 
-void board_destroy(int **board) {
+void board_destroy(Board board) {
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		free(board[row]);
 	}

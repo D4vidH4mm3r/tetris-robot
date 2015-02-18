@@ -71,7 +71,7 @@ XImage *take_some_image(Corners c, Display *d) {
 	return image;
 }
 
-void copy_to_board(Corners c, Display *d, int **board) {
+void copy_to_board(Corners c, Display *d, Board board) {
 	XImage *image = take_some_image(c, d);
 	XColor color;
 
@@ -184,7 +184,7 @@ int main(int argc, char const *argv[]) {
 	Corners curr_block = {218, 1792, 237, 1776};
 	Corners next_block = {260, 1975, 264, 1971};
 
-	int **board = board_create();
+	Board board = board_create();
 
 	Display *display = XOpenDisplay(NULL);
 

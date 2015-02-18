@@ -20,18 +20,18 @@ typedef struct MoveSet_t {
 	Move *moves;
 } MoveSet;
 
-long score_height(int **board);
-long score_holes(int **board);
-long score_cleared(int **board);
-long score_bumps(int **board);
-double score_total(int **board);
+long score_height(Board board);
+long score_holes(Board board);
+long score_cleared(Board board);
+long score_bumps(Board board);
+double score_total(Board board);
 
-Move *move_best(int **board, Block *blocks);
+Move *move_best(Board board, Block *blocks);
 MoveSet *move_all(Block *block);
-Move *move_best_lookahead(int **board, Block *current, Block *next);
+Move *move_best_lookahead(Board board, Block *current, Block *next);
 void move_copy(Move *to, Move *from);
 
-void move_execute(Move *move, int **board);
+void move_execute(Move *move, Board board);
 void move_print(Move *m);
 
 void move_destroy(Move *move);

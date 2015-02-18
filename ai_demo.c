@@ -10,7 +10,7 @@ int random_blockno() {
 
 int main(void) {
 	srand(time(NULL));
-	int **b = board_create();
+	Board b = board_create();
 	int cleared = 0;
 
 	Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
@@ -34,7 +34,8 @@ int main(void) {
 			b = board_create();
 		}
 		cleared += board_collapse(b);
-		//board_print(b);
+		board_print(b);
+		sleep(1);
 
 		queue[0] = queue[1];
 	}

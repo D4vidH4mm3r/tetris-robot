@@ -1,16 +1,16 @@
 #include "Block.h"
 
-void block_addblock(Block *block, int rot, int **board, int row, int col) {
+void block_addblock(Block *block, int rot, Board board, int row, int col) {
 	for (int i=0; i<4; i++) {
 		for (int j=0; j<4; j++) {
 			if (block->m[rot][i][j]) {
-				board[row+i][col+j] = block->c;
+				board[row+i][col+j] = (char)block->c;
 			}
 		}
 	}
 }
 
-int block_touches(Block *block, int rot, int **board, int row, int col) {
+int block_touches(Block *block, int rot, Board board, int row, int col) {
 	for (int i=0; i<4; i++) {
 		for (int j=0; j<4; j++) {
 			if (block->m[rot][i][j] && (i+row+1>=BOARD_HEIGHT || board[i+row+1][col+j])) {
@@ -21,7 +21,7 @@ int block_touches(Block *block, int rot, int **board, int row, int col) {
 	return 0;
 }
 
-int block_hits_row(Block *block, int rot, int **board, int col) {
+int block_hits_row(Block *block, int rot, Board board, int col) {
 	int row = 0;
 	while (!block_touches(block, rot, board, row, col)) {
 		row++;
@@ -29,7 +29,7 @@ int block_hits_row(Block *block, int rot, int **board, int col) {
 	return row;
 }
 
-void block_drop(Block *block, int rot, int **board, int col) {
+void block_drop(Block *block, int rot, Board board, int col) {
 	block_addblock(block, rot, board,
 			block_hits_row(block, rot, board, col),
 			col);
