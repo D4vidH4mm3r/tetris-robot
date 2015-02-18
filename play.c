@@ -220,5 +220,6 @@ int main(int argc, char const *argv[]) {
 		queue[0] = queue[1];
 		sleep(1);
 	}
+	board_destroy(board);
 	return 0;
 }

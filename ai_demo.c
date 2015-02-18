@@ -17,7 +17,7 @@ int main(void) {
 	Block *queue = malloc(2*sizeof(Block));
 	queue[0] = *blocks[random_blockno()];
 
-	for (int i=0; i<2000; i++) {
+	for (int i=0; i<10; i++) {
 		queue[1] = *blocks[random_blockno()];
 
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
@@ -34,12 +34,12 @@ int main(void) {
 			b = board_create();
 		}
 		cleared += board_collapse(b);
-		board_print(b);
-		sleep(1);
 
 		queue[0] = queue[1];
 	}
 	board_print(b);
 	printf("%d cleared\n", cleared);
+	board_destroy(b);
+	free(queue);
 	return 0;
 }

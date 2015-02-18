@@ -149,6 +149,7 @@ Move *move_best_lookahead(Board board, Block *current, Block *next) {
 			move_copy(best, best_next);
 			best->prev = current;
 		}
+		move_destroy(best_next);
 	}
 
 	move_copy(best, best->prev);
@@ -174,5 +175,6 @@ void move_destroy(Move *move) {
 }
 
 void moveset_destroy(MoveSet *moves) {
+	free(moves->moves);
 	free(moves);
 }
