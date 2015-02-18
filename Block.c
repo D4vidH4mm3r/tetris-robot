@@ -89,7 +89,7 @@ Block block_T = {
 
 Block block_L = {
 	4,
-	{2, 3, 2, 3},
+	{3, 2, 3, 2},
 	{3, 4, 3, 3},
 	MAGENTA,
 	{
@@ -122,7 +122,7 @@ Block block_L = {
 
 Block block_Lr = {
 	4,
-	{2, 3, 2, 3},
+	{3, 2, 3, 2},
 	{3, 4, 3, 3},
 	BLUE,
 	{
