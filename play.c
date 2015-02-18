@@ -3,6 +3,7 @@
 #include <X11/extensions/XTest.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include "common.h"
 #include "Board.h"
@@ -158,31 +159,37 @@ void move_send(Move *move, Display *display) {
 
 	/* rotate */
 	for (int i=0; i<move->rot; i++) {
-		XTestFakeKeyEvent(display, k_up, True, 10);
-		XTestFakeKeyEvent(display, k_up, False, 10);
+		XTestFakeKeyEvent(display, k_up, True, 50);
+		XTestFakeKeyEvent(display, k_up, False, 50);
 	}
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
 		for (int i=0; i<moves_right; i++) {
-			XTestFakeKeyEvent(display, k_right, True, 10);
-			XTestFakeKeyEvent(display, k_right, False, 10);
+			XTestFakeKeyEvent(display, k_right, True, 50);
+			XTestFakeKeyEvent(display, k_right, False, 50);
 		}
 	} else {
 		for (int i=0; i<(-moves_right); i++) {
-			XTestFakeKeyEvent(display, k_left, True, 10);
-			XTestFakeKeyEvent(display, k_left, False, 10);
+			XTestFakeKeyEvent(display, k_left, True, 50);
+			XTestFakeKeyEvent(display, k_left, False, 50);
 		}
 	}
 	move_print(move);
-	XTestFakeKeyEvent(display, k_space, True, 10);
-	XTestFakeKeyEvent(display, k_space, False, 10);
+	XTestFakeKeyEvent(display, k_space, True, 50);
+	XTestFakeKeyEvent(display, k_space, False, 50);
 	XFlush(display);
 }
 
 int main(int argc, char const *argv[]) {
-	Corners curr_block = {218, 1792, 237, 1776};
-	Corners next_block = {260, 1975, 264, 1971};
+	struct timespec ts;
+	ts.tv_sec=0;
+	ts.tv_nsec=100000000L;
+
+	//Corners curr_block = {218, 1792, 237, 1776};
+	//Corners next_block = {260, 1975, 264, 1971};
+	Corners curr_block = {103, 852, 112, 834};
+	Corners next_block = {134, 1000, 142, 990};
 
 	Board board = board_create();
 
@@ -218,7 +225,7 @@ int main(int argc, char const *argv[]) {
 		board_print(board);
 
 		queue[0] = queue[1];
-		sleep(1);
+		nanosleep(&ts);
 	}
 	board_destroy(board);
 	return 0;
