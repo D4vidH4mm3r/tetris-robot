@@ -19,6 +19,7 @@ int block_touches(Block *block, int rot, Board board, int row, int col);
 int block_hits_row(Block *block, int rot, Board board, int col);
 void block_addblock(Block *block, int rot, Board board, int row, int col);
 void block_drop(Block *block, int rot, Board board, int col);
+void color_print(Color c);
 Block block_I;
 Block block_T;
 Block block_O;
