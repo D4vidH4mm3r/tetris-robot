@@ -205,3 +205,31 @@ Block block_Zr = {
 			{0,1,0,0},
 			{0,0,0,0}}}
 };
+
+void color_print(Color c) {
+	switch (c) {
+		case TEAL:
+			printf("TEAL\n");
+			break;
+		case RED:
+			printf("RED\n");
+			break;
+		case BLUE:
+			printf("BLUE\n");
+			break;
+		case MAGENTA:
+			printf("MAGENTA\n");
+			break;
+		case GREEN:
+			printf("GREEN\n");
+			break;
+		case YELLOW:
+			printf("YELLOW\n");
+			break;
+		case WHITE:
+			printf("WHITE\n");
+			break;
+		default:
+			printf("None...\n");
+	}
+}
