@@ -1,5 +1,13 @@
 #include "Interaction.h"
 
+#ifdef _WIN32
+#else
+WMconnection *setup_interaction() {
+	WMconnection *res = XOpenDisplay(NULL);
+	return res;
+}
+#endif
+
 void wait(unsigned long msec) {
 	struct timespec ts;
 	ts.tv_sec=0;
@@ -7,7 +15,7 @@ void wait(unsigned long msec) {
 	nanosleep(&ts);
 }
 
-void move_send(Move *move, Display *display) {
+void move_send(Move *move, WMconnection *display) {
 	/* xmodmap -pke er nyttig */
 	unsigned int k_space = 65;
 	unsigned int k_left = 113;
@@ -39,7 +47,7 @@ void move_send(Move *move, Display *display) {
 	XFlush(display);
 }
 
-Color color_guess(XColor *c) {
+Color color_guess(WMcolor *c) {
 	int low = 8000;
 	int mid = 20000;
 	int high = 35000;
@@ -77,7 +85,7 @@ Color color_guess(XColor *c) {
 	}
 }
 
-XImage *take_some_image(Corners c, Display *d) {
+XImage *take_some_image(Corners c, WMconnection *d) {
 	XImage *image = XGetImage(d,
 			RootWindow(d, DefaultScreen(d)),
 			c.west,
@@ -89,9 +97,9 @@ XImage *take_some_image(Corners c, Display *d) {
 	return image;
 }
 
-void copy_to_board(Corners c, Display *d, Board board) {
+void copy_to_board(Corners c, WMconnection *d, Board board) {
 	XImage *image = take_some_image(c, d);
-	XColor color;
+	WMcolor color;
 
 	int xstep = (c.east - c.west)/BOARD_WIDTH;
 	int ystep = (c.south - c.north)/BOARD_HEIGHT;
@@ -110,9 +118,9 @@ void copy_to_board(Corners c, Display *d, Board board) {
 	XFree(image);
 }
 
-Color guess_color_area(Corners c, Display *d) {
+Color guess_color_area(Corners c, WMconnection *d) {
 	XImage *image = take_some_image(c, d);
-	XColor color;
+	WMcolor color;
 
 	int width = (c.east-c.west);
 	int height = (c.south-c.north);

@@ -9,7 +9,7 @@ int main(int argc, char const *argv[]) {
 
 	Board board = board_create();
 
-	Display *display = XOpenDisplay(NULL);
+	WMconnection *wm = setup_interaction();
 
 	Block *blocks[8] = {NULL, &block_Lr, &block_Zr, &block_O, &block_L, &block_I, &block_T, &block_Z};
 	Block *queue[2] = {0, 0};
@@ -17,12 +17,12 @@ int main(int argc, char const *argv[]) {
 	Color first = 0;
 	Color next;
 	while (!first) {
-		first = guess_color_area(curr_block, display);
+		first = guess_color_area(curr_block, wm);
 	}
 	queue[0] = blocks[first];
 
 	while (1) {
-		next = guess_color_area(next_block, display);
+		next = guess_color_area(next_block, wm);
 		queue[1] = blocks[next];
 
 		printf("Current:\n");
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[]) {
 		Move *best = move_best_lookahead(board, queue[0], queue[1]);
 		move_print(best);
 		move_execute(best, board);
-		move_send(best, display);
+		move_send(best, wm);
 		move_destroy(best);
 		board_collapse(board);
 		board_print(board);
