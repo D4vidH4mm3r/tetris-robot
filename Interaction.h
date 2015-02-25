@@ -20,8 +20,8 @@ typedef struct Point_t {
 
 typedef struct RGBColor_t {
 	int red;
-	int blue;
 	int green;
+	int blue;
 } RGBColor;
 
 #if defined(_WIN32) || defined(__CYGWIN__)
