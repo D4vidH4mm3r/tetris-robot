@@ -30,7 +30,19 @@ RGBColor get_color(Point p) {
 
 void move_send(Move *move) {
 	/* rotate */
-	for (int i=0; i<move->rot; i++) { press_key('W'); }
+	switch (move->rot) {
+		case 0:
+			break;
+		case 1:
+			press_key('W');
+			break;
+		case 2:
+			press_key('F');
+			break;
+		case 3:
+			press_key('S');
+			break;
+	}
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
@@ -38,7 +50,7 @@ void move_send(Move *move) {
 	} else {
 		for (int i=0; i<(-moves_right); i++) { press_key('A'); }
 	}
-	press_key('S');
+	press_key('E');
 }
 
 Color guess_color(RGBColor c) {
