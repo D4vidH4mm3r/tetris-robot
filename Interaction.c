@@ -93,3 +93,22 @@ Color color_at_point(Point p) {
 	RGBColor c = get_color(p);
 	return guess_color(c);
 }
+
+void copy_to_board(Board board, Point NW, Point SE, int lines) {
+	/* entire board should be inside NW - SE
+	 * lines is number of lines from bottom to copy */
+	int bsize = (NW.y-SE.y)/BOARD_HEIGHT;
+	HDC _hdc = GetDC(NULL);
+	for (int row=BOARD_HEIGHT-lines; row<BOARD_HEIGHT; row++) {
+		for (int col=0; col<BOARD_WIDTH; col++) {
+			int x = NW.x + col*bsize;
+			int y = NW.y + row*bsize;
+			COLORREF _color = GetPixel(_hdc, x, y);
+			RGBColor color = {GetRValue(_color),
+				GetGValue(_color),
+				GetBValue(_color)};
+			board[row][col] = guess_color(color);
+		}
+	}
+	ReleaseDC(NULL, _hdc);
+}

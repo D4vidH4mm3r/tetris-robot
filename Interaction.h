@@ -29,7 +29,7 @@ typedef struct RGBColor_t {
 RGBColor get_color(Point p);
 Color guess_color(RGBColor c);
 Color color_at_point(Point p);
-void copy_to_board(Corners c, Board board);
+void copy_to_board(Board board, Point NW, Point SE, int lines);
 void move_send(Move *move);
 
 #endif

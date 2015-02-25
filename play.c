@@ -4,6 +4,8 @@ int main(int argc, char const *argv[]) {
 
 	Point curr_block = {621, 416};
 	Point next_block = {984, 507};
+	Point NW = {398, 411};
+	Point SE = {849, 1222};
 
 	Board board = board_create();
 
@@ -16,7 +18,10 @@ int main(int argc, char const *argv[]) {
 		first = color_at_point(curr_block);
 	}
 	queue[0] = blocks[first];
+	//copy_to_board(board, NW, SE, 9);
+	board_print(board);
 
+	Sleep(100);
 	while (1) {
 		next = color_at_point(next_block);
 		RGBColor testc = get_color(next_block);
@@ -38,7 +43,7 @@ int main(int argc, char const *argv[]) {
 		board_print(board);
 
 		queue[0] = queue[1];
-		Sleep(1000);
+		Sleep(70);
 	}
 	board_destroy(board);
 	return 0;
