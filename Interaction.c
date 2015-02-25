@@ -1,11 +1,106 @@
 #include "Interaction.h"
 
 #ifdef _WIN32
+WMconnection *setup_interaction() {
+	FARPROC pGetPixel;
+	HINSTANCE _hGDI = LoadLibrary("gdi32.dll");
+	pGetPixel = GetProcAddress(_hGDI, "GetPixel");
+	return NULL; // nothing needed for now
+}
+
+void press_key(char key, WMconnection *d) {
+	INPUT ip;
+	ip.type = INPUT_KEYBOARD;
+	ip.ki.wScan = 0;
+	ip.ki.time = 0;
+	ip.ki.dwExtraInfo = 0;
+
+	Sleep(20);
+	ip.ki.wVk = key;
+	ip.ki.dwFlags = 0;
+	SendInput(1, &ip, sizeof(INPUT));
+
+	Sleep(20);
+	ip.ki.wVk = key;
+	ip.ki.dwFlags = KEYEVENTF_KEYUP;
+	SendInput(1, &ip, sizeof(INPUT));
+}
+
+void wait(unsigned long msec) {
+	Sleep(msec);
+}
+
+RGBColor get_color(Point p, WMconnection *d) {
+	HDC _hdc = GetDC(NULL);
+	COLORREF _color = (*pGetPixel, p.x, p.y);
+	ReleaseDC(NULL, _hdc);
+	RGBColor res = {GetRValue(_color),
+		GetGValue(_color),
+		GetBValue(_color)};
+	return res;
+}
+
 #else
+
 WMconnection *setup_interaction() {
 	WMconnection *res = XOpenDisplay(NULL);
 	return res;
 }
+
+void press_key(char key, WMconnection *d) {
+	int keycode;
+	switch (key) {
+		// WASD
+		case 'W':
+			keycode=25;
+			break;
+		case 'A':
+			keycode=38;
+			break;
+		case 'S':
+			keycode=40;
+			break;
+		case 'D':
+			keycode=42;
+			break;
+			// arrows and space
+		case ' ':
+			keycode=65;
+			break;
+		case 'l':
+			keycode=113;
+			break;
+		case 'r':
+			keycode=114;
+			break;
+		case 'u':
+			keycode=111;
+			break;
+	}
+	XTestFakeKeyEvent(d, keycode, True, 50);
+	XTestFakeKeyEvent(d, keycode, False, 50);
+	// XFlush(d); ?
+}
+
+RGBColor get_color(Point p, WMconnection *d) {
+	XImage *image = XGetImage(d,
+			RootWindow(d, DefaultScreen(d)),
+			p.x,
+			p.y,
+			1,
+			1,
+			AllPlanes,
+			XYPixmap);
+
+	XColor color;
+
+	color.pixel = XGetPixel(image, 0, 0);
+	XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
+	XFree(image);
+	RGBColor res = {color.red, color.green, color.blue};
+	return res;
+}
+
 #endif
 
 void wait(unsigned long msec) {
@@ -15,52 +110,31 @@ void wait(unsigned long msec) {
 	nanosleep(&ts);
 }
 
-void move_send(Move *move, WMconnection *display) {
-	/* xmodmap -pke er nyttig */
-	unsigned int k_space = 65;
-	unsigned int k_left = 113;
-	unsigned int k_right = 114;
-	unsigned int k_up = 111;
-	int wait_down = 50;
-	int wait_up = 50;
-
+void move_send(Move *move, WMconnection *d) {
 	/* rotate */
-	for (int i=0; i<move->rot; i++) {
-		XTestFakeKeyEvent(display, k_up, True, wait_down);
-		XTestFakeKeyEvent(display, k_up, False, wait_up);
-	}
+	for (int i=0; i<move->rot; i++) { press_key('W', d); }
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
-		for (int i=0; i<moves_right; i++) {
-			XTestFakeKeyEvent(display, k_right, True, wait_down);
-			XTestFakeKeyEvent(display, k_right, False, wait_up);
-		}
+		for (int i=0; i<moves_right; i++) { press_key('D', d); }
 	} else {
-		for (int i=0; i<(-moves_right); i++) {
-			XTestFakeKeyEvent(display, k_left, True, wait_down);
-			XTestFakeKeyEvent(display, k_left, False, wait_up);
-		}
+		for (int i=0; i<(-moves_right); i++) { press_key('A', d); }
 	}
-	XTestFakeKeyEvent(display, k_space, True, wait_down);
-	XTestFakeKeyEvent(display, k_space, False, wait_up);
-	XFlush(display);
+	press_key('S', d);
 }
 
-Color color_guess(WMcolor *c) {
-	int low = 8000;
-	int mid = 20000;
-	int high = 35000;
-	if (c->red>high) {
-		if (c->green>high) {
-			if (c->blue>high) {
+Color guess_color(RGBColor c) {
+	int high = 98;
+	if (c.red>high) {
+		if (c.green>high) {
+			if (c.blue>high) {
 				return WHITE;
 			} else {
 				return YELLOW;
 			}
 		} else {
 			/* red high, green not */
-			if (c->blue>high) {
+			if (c.blue>high) {
 				return MAGENTA;
 			} else {
 				return RED;
@@ -68,15 +142,15 @@ Color color_guess(WMcolor *c) {
 		}
 	} else {
 		/* red low */
-		if (c->green>high) {
-			if (c->blue>high) {
+		if (c.green>high) {
+			if (c.blue>high) {
 				return TEAL;
 			} else {
 				return GREEN;
 			}
 		} else {
 			/* red, green low */
-			if (c->blue>high) {
+			if (c.blue>high) {
 				return BLUE;
 			} else {
 				return 0;
@@ -85,57 +159,7 @@ Color color_guess(WMcolor *c) {
 	}
 }
 
-XImage *take_some_image(Corners c, WMconnection *d) {
-	XImage *image = XGetImage(d,
-			RootWindow(d, DefaultScreen(d)),
-			c.west,
-			c.north,
-			(c.east-c.west),
-			(c.south-c.north),
-			AllPlanes,
-			XYPixmap);
-	return image;
-}
-
-void copy_to_board(Corners c, WMconnection *d, Board board) {
-	XImage *image = take_some_image(c, d);
-	WMcolor color;
-
-	int xstep = (c.east - c.west)/BOARD_WIDTH;
-	int ystep = (c.south - c.north)/BOARD_HEIGHT;
-
-	for (int row=0; row<BOARD_HEIGHT; row++) {
-		int y = row*ystep + ystep/2;
-
-		for (int col=0; col<BOARD_WIDTH; col++) {
-			int x = col*xstep + xstep/2;
-
-			color.pixel = XGetPixel(image, x, y);
-			XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
-			board[row][col] = color_guess(&color);
-		}
-	}
-	XFree(image);
-}
-
-Color guess_color_area(Corners c, WMconnection *d) {
-	XImage *image = take_some_image(c, d);
-	WMcolor color;
-
-	int width = (c.east-c.west);
-	int height = (c.south-c.north);
-
-	for (int y=0; y<height; y++) {
-		for (int x=0; x<width; x++) {
-			color.pixel = XGetPixel(image, x, y);
-			XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
-			Color guess = color_guess(&color);
-			if (guess) {
-				XFree(image);
-				return guess;
-			}
-		}
-	}
-	XFree(image);
-	return 0;
+Color color_at_point(Point p, WMconnection *d) {
+	RGBColor c = get_color(p, d);
+	return guess_color(c);
 }

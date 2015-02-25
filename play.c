@@ -2,10 +2,8 @@
 
 int main(int argc, char const *argv[]) {
 
-	Corners curr_block = {218, 1792, 237, 1776};
-	Corners next_block = {260, 1975, 264, 1971};
-	//Corners curr_block = {103, 852, 112, 834};
-	//Corners next_block = {134, 1000, 142, 990};
+	Point curr_block = {218, 1792};
+	Point next_block = {260, 1975};
 
 	Board board = board_create();
 
@@ -17,12 +15,12 @@ int main(int argc, char const *argv[]) {
 	Color first = 0;
 	Color next;
 	while (!first) {
-		first = guess_color_area(curr_block, wm);
+		first = color_at_point(next_block, wm);
 	}
 	queue[0] = blocks[first];
 
 	while (1) {
-		next = guess_color_area(next_block, wm);
+		next = color_at_point(curr_block, wm);
 		queue[1] = blocks[next];
 
 		printf("Current:\n");
