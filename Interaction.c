@@ -1,11 +1,6 @@
 #include "Interaction.h"
 
-#if defined(_WIN32) || defined(__CYGWIN__)
-WMconnection *setup_interaction() {
-	return NULL; // nothing needed for now
-}
-
-void press_key(char key, WMconnection *d) {
+void press_key(char key) {
 	INPUT ip;
 	ip.type = INPUT_KEYBOARD;
 	ip.ki.wScan = 0;
@@ -23,11 +18,7 @@ void press_key(char key, WMconnection *d) {
 	SendInput(1, &ip, sizeof(INPUT));
 }
 
-void wait(unsigned long msec) {
-	Sleep(msec);
-}
-
-RGBColor get_color(Point p, WMconnection *d) {
+RGBColor get_color(Point p) {
 	HDC _hdc = GetDC(NULL);
 	COLORREF _color = GetPixel(_hdc, p.x, p.y);
 	ReleaseDC(NULL, _hdc);
@@ -37,87 +28,17 @@ RGBColor get_color(Point p, WMconnection *d) {
 	return res;
 }
 
-#else
-
-WMconnection *setup_interaction() {
-	WMconnection *res = XOpenDisplay(NULL);
-	return res;
-}
-
-void press_key(char key, WMconnection *d) {
-	int keycode;
-	switch (key) {
-		// WASD
-		case 'W':
-			keycode=25;
-			break;
-		case 'A':
-			keycode=38;
-			break;
-		case 'S':
-			keycode=40;
-			break;
-		case 'D':
-			keycode=42;
-			break;
-			// arrows and space
-		case ' ':
-			keycode=65;
-			break;
-		case 'l':
-			keycode=113;
-			break;
-		case 'r':
-			keycode=114;
-			break;
-		case 'u':
-			keycode=111;
-			break;
-	}
-	XTestFakeKeyEvent(d, keycode, True, 50);
-	XTestFakeKeyEvent(d, keycode, False, 50);
-	// XFlush(d); ?
-}
-
-RGBColor get_color(Point p, WMconnection *d) {
-	XImage *image = XGetImage(d,
-			RootWindow(d, DefaultScreen(d)),
-			p.x,
-			p.y,
-			1,
-			1,
-			AllPlanes,
-			XYPixmap);
-
-	XColor color;
-
-	color.pixel = XGetPixel(image, 0, 0);
-	XQueryColor(d, DefaultColormap(d, DefaultScreen(d)), &color);
-	XFree(image);
-	RGBColor res = {color.red, color.green, color.blue};
-	return res;
-}
-
-void wait(unsigned long msec) {
-	struct timespec ts;
-	ts.tv_sec=0;
-	ts.tv_nsec=msec*1000000;
-	nanosleep(&ts);
-}
-
-#endif
-
-void move_send(Move *move, WMconnection *d) {
+void move_send(Move *move) {
 	/* rotate */
-	for (int i=0; i<move->rot; i++) { press_key('W', d); }
+	for (int i=0; i<move->rot; i++) { press_key('W'); }
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
-		for (int i=0; i<moves_right; i++) { press_key('D', d); }
+		for (int i=0; i<moves_right; i++) { press_key('D'); }
 	} else {
-		for (int i=0; i<(-moves_right); i++) { press_key('A', d); }
+		for (int i=0; i<(-moves_right); i++) { press_key('A'); }
 	}
-	press_key('S', d);
+	press_key('S');
 }
 
 Color guess_color(RGBColor c) {
@@ -156,7 +77,7 @@ Color guess_color(RGBColor c) {
 	}
 }
 
-Color color_at_point(Point p, WMconnection *d) {
-	RGBColor c = get_color(p, d);
+Color color_at_point(Point p) {
+	RGBColor c = get_color(p);
 	return guess_color(c);
 }

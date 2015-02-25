@@ -1,6 +1,7 @@
 #ifndef _interaction_h
 #define _interaction_h
 
+#include <Windows.h>
 #include "common.h"
 #include "Board.h"
 #include "Block.h"
@@ -24,27 +25,11 @@ typedef struct RGBColor_t {
 	int blue;
 } RGBColor;
 
-#if defined(_WIN32) || defined(__CYGWIN__)
 
-#include <Windows.h>
-typedef int WMconnection;
-
-#else
-
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XTest.h>
-#include <sys/time.h>
-typedef Display WMconnection;
-
-#endif
-
-WMconnection *setup_interaction();
-RGBColor get_color(Point p, WMconnection *d);
+RGBColor get_color(Point p);
 Color guess_color(RGBColor c);
-Color color_at_point(Point p, WMconnection *d);
-void copy_to_board(Corners c, WMconnection *d, Board board);
-void move_send(Move *move, WMconnection *d);
-void wait(unsigned long msec);
+Color color_at_point(Point p);
+void copy_to_board(Corners c, Board board);
+void move_send(Move *move);
 
 #endif
