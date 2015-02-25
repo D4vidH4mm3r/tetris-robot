@@ -6,7 +6,7 @@
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 20
 
-typedef enum {BLUE=1, TEAL, YELLOW, MAGENTA, GREEN, RED, WHITE} Color;
+typedef enum {BLUE=1, TEAL, YELLOW, MAGENTA, GREEN, RED, WHITE, GREY} Color;
 typedef char **Board;
 
 #endif

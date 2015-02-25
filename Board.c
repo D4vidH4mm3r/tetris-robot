@@ -50,6 +50,9 @@ void board_print(Board b) {
 					case WHITE:
 						printf("\x1B[37m");
 						break;
+					case GREY:
+						printf("\x1B[40m");
+						break;
 				}
 				printf("#\x1B[0m");
 			} else {
