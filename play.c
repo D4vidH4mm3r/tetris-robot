@@ -27,15 +27,15 @@ int main(int argc, char const *argv[]) {
 		RGBColor testc = get_color(next_block);
 		queue[1] = blocks[next];
 
-		printf("Current:\n");
-		color_print(queue[0]->c);
+		//printf("Current:\n");
+		//color_print(queue[0]->c);
 
-		printf("Next:\n");
-		color_print(queue[1]->c);
-		printf("---------\n");
+		//printf("Next:\n");
+		//color_print(queue[1]->c);
+		//printf("---------\n");
 
 		Move *best = move_best_lookahead(board, queue[0], queue[1]);
-		move_print(best);
+		//move_print(best);
 		move_execute(best, board);
 		move_send(best);
 		move_destroy(best);
@@ -43,7 +43,7 @@ int main(int argc, char const *argv[]) {
 		board_print(board);
 
 		queue[0] = queue[1];
-		Sleep(70);
+		Sleep(65);
 	}
 	board_destroy(board);
 	return 0;

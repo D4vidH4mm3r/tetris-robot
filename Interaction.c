@@ -12,7 +12,7 @@ void press_key(char key) {
 	ip.ki.dwFlags = 0;
 	SendInput(1, &ip, sizeof(INPUT));
 
-	Sleep(20);
+	Sleep(12);
 	ip.ki.wVk = key;
 	ip.ki.dwFlags = KEYEVENTF_KEYUP;
 	SendInput(1, &ip, sizeof(INPUT));
