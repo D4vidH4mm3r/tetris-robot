@@ -1,4 +1,3 @@
-LDFLAGS = -L/usr/include -lX11 -lXtst
 CFLAGS = -std=c99 -Ofast -march=native -flto -fwhole-program
 OBJS = Block.o AI.o Board.o
 CC=gcc
@@ -9,7 +8,7 @@ bin/ai_demo: ai_demo.c $(OBJS) common.h
 	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo
 
 bin/play: play.c $(OBJS) Interaction.o common.h
-	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play -lgdi32
 
 Interaction.o: Interaction.h Interaction.c $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -c Interaction.c $(LDFLAGS)

@@ -1,10 +1,7 @@
 #include "Interaction.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
 WMconnection *setup_interaction() {
-	FARPROC pGetPixel;
-	HINSTANCE _hGDI = LoadLibrary("gdi32.dll");
-	pGetPixel = GetProcAddress(_hGDI, "GetPixel");
 	return NULL; // nothing needed for now
 }
 
@@ -32,7 +29,7 @@ void wait(unsigned long msec) {
 
 RGBColor get_color(Point p, WMconnection *d) {
 	HDC _hdc = GetDC(NULL);
-	COLORREF _color = (*pGetPixel, p.x, p.y);
+	COLORREF _color = GetPixel(_hdc, p.x, p.y);
 	ReleaseDC(NULL, _hdc);
 	RGBColor res = {GetRValue(_color),
 		GetGValue(_color),
@@ -101,14 +98,14 @@ RGBColor get_color(Point p, WMconnection *d) {
 	return res;
 }
 
-#endif
-
 void wait(unsigned long msec) {
 	struct timespec ts;
 	ts.tv_sec=0;
 	ts.tv_nsec=msec*1000000;
 	nanosleep(&ts);
 }
+
+#endif
 
 void move_send(Move *move, WMconnection *d) {
 	/* rotate */
