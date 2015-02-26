@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]) {
 		next = color_at_point(next_block);
 		RGBColor testc = get_color(next_block);
 
-		copy_to_board(board, NW, SE, BOARD_HEIGHT);
+		copy_to_board(board, NW, SE, BOARD_HEIGHT-2);
 		board_print(board);
 
 		Sleep(200);

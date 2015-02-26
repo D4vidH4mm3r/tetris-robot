@@ -59,7 +59,7 @@ void move_send(Move *move) {
 
 Color guess_color(RGBColor c) {
 	int high = 160;
-	int low  = 60;
+	int low  = 75;
 	if (c.red>high) {
 		if (c.green>high) {
 			if (c.blue>high) {
