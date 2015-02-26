@@ -2,7 +2,7 @@
 
 int ai_build_up = 0;
 
-int score_height(Board board) {
+void score_sweep(Board board, ScoreSet *score) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
 		block_seen[i] = BOARD_HEIGHT;
@@ -14,11 +14,19 @@ int score_height(Board board) {
 			}
 		}
 	}
+
 	int height = 0;
 	for (int col=0; col<BOARD_WIDTH; col++) {
 		height += (BOARD_HEIGHT-block_seen[col]);
 	}
-	return height;
+
+	int bumps = 0;
+	for (int col=0; col<BOARD_WIDTH-1; col++) {
+		bumps += abs(block_seen[col] - block_seen[col+1]);
+	}
+
+	score->height_total = height;
+	score->bumps = bumps;
 }
 
 int score_holes(Board board) {
@@ -52,33 +60,13 @@ int score_cleared(Board board ) {
 	return cleared;
 }
 
-int score_bumps(Board board) {
-	int block_seen[BOARD_WIDTH];
-	for (int i=0; i<BOARD_WIDTH; i++) {
-		block_seen[i] = BOARD_HEIGHT;
-	}
-	for (int row=0; row<BOARD_HEIGHT; row++) {
-		for (int col=0; col<BOARD_WIDTH; col++) {
-			if ((row < block_seen[col]) && board[row][col]) {
-				block_seen[col] = row;
-			}
-		}
-	}
-	int bumps = 0;
-	for (int col=0; col<BOARD_WIDTH-1; col++) {
-		bumps += abs(block_seen[col] - block_seen[col+1]);
-	}
-	return bumps;
-}
-
 /* values from https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/ */
 double score_total(Board board) {
 	/* here, weighting is important; higher is better */
 	ScoreSet score;
-	score.bumps = score_bumps(board);
 	score.cleared = score_cleared(board);
-	score.height_total = score_height(board);
 	score.holes = score_holes(board);
+	score_sweep(board, &score);
 	if (ai_build_up) {
 		return score.holes*(-5.0)
 			+ score.height_total*(+0.1)
