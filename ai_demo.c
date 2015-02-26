@@ -20,6 +20,7 @@ int main(void) {
 	Block *queue = malloc(2*sizeof(Block));
 	queue[0] = *blocks[random_blockno()];
 
+	ai_build_up = 1;
 	for (int i=0; i<2000; i++) {
 		queue[1] = *blocks[random_blockno()];
 
@@ -27,6 +28,13 @@ int main(void) {
 		//move_print(best);
 		move_execute(best, b);
 		board_print(b);
+		if (score_height(b) > 85) {
+			printf("Switching to destroy\n");
+			ai_build_up = 0;
+		} else if (score_height(b) < 20) {
+			printf("Switching to build\n");
+			ai_build_up = 1;
+		}
 		move_destroy(best);
 
 		if (board_dead(b)) {

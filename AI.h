@@ -37,4 +37,6 @@ void move_print(Move *m);
 void move_destroy(Move *move);
 void moveset_destroy(MoveSet *moves);
 
+extern int ai_build_up;
+
 #endif

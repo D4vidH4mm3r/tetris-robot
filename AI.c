@@ -1,5 +1,7 @@
 #include "AI.h"
 
+int ai_build_up = 0;
+
 long score_height(Board board) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
@@ -88,7 +90,11 @@ Move *move_best(Board board, Block *block) {
 	best->value = -DBL_MAX;
 	best->block = block;
 	for (int rot=0; rot<block->nr; rot++) {
-		for (int col=0; col<BOARD_WIDTH-block->w[rot]+1; col++) {
+		int maxcol = BOARD_WIDTH-block->w[rot]+1;
+		if (ai_build_up) {
+			maxcol = maxcol - 2;
+		}
+		for (int col=0; col<maxcol; col++) {
 			board_copy(copy, board);
 			block_drop(block, rot, copy, col);
 			double score = score_total(copy);
@@ -110,6 +116,9 @@ MoveSet *move_all(Block *block) {
 
 	for (int rot=0; rot<block->nr; rot++) {
 		int trycols = BOARD_WIDTH-block->w[rot]+1;
+		if (ai_build_up) {
+			trycols = trycols - 2;
+		}
 		length += trycols;
 	}
 
@@ -120,6 +129,9 @@ MoveSet *move_all(Block *block) {
 	int moveno = 0;
 	for (int rot=0; rot<block->nr; rot++) {
 		int trycols = BOARD_WIDTH-block->w[rot]+1;
+		if (ai_build_up) {
+			trycols = trycols - 2;
+		}
 		for (int col=0; col<trycols; col++) {
 			Move *current = &ms->moves[moveno];
 			current->col = col;
