@@ -22,6 +22,7 @@ int main(int argc, char const *argv[]) {
 	board_print(board);
 
 	int check_board = 10;
+	ai_build_up = 1;
 	Sleep(100);
 	while (1) {
 		next = color_at_point(next_block);
@@ -46,6 +47,13 @@ int main(int argc, char const *argv[]) {
 			copy_to_board(board, NW, SE, BOARD_HEIGHT);
 			board_print(board);
 			check_board = 10;
+		}
+		if (score_height(board) > 60) {
+			printf("destroy\n");
+			ai_build_up = 0;
+		} else if (score_height(board) < 25) {
+			printf("build\n");
+			ai_build_up = 1;
 		}
 
 		queue[0] = queue[1];

@@ -74,14 +74,28 @@ long score_bumps(Board board) {
 /* values from https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/ */
 double score_total(Board board) {
 	/* here, weighting is important; higher is better */
-	return score_cleared(board)*0.99275
-		+ score_holes(board)*(-0.46544)
-		+ score_height(board)*(-0.66569)
-		+ score_bumps(board)*(-0.24077);
+	if (ai_build_up) {
+		return score_holes(board)*(-1.0)
+			+ score_height(board)*(-0.3)
+			+ score_bumps(board)*(-0.3);
+	} else {
+		return score_cleared(board)*0.99275
+			+ score_holes(board)*(-0.46544)
+			+ score_height(board)*(-0.66569)
+			+ score_bumps(board)*(-0.24077);
+	}
 }
 
 void move_execute(Move *move, Board board) {
 	block_drop(move->block, move->rot, board, move->col);
+}
+
+int trycols(Block *b, int rot) {
+	if (ai_build_up) {
+		return BOARD_WIDTH - b->w[rot]-1;
+	} else {
+		return BOARD_WIDTH - b->w[rot]+1;
+	}
 }
 
 Move *move_best(Board board, Block *block) {
@@ -90,10 +104,7 @@ Move *move_best(Board board, Block *block) {
 	best->value = -DBL_MAX;
 	best->block = block;
 	for (int rot=0; rot<block->nr; rot++) {
-		int maxcol = BOARD_WIDTH-block->w[rot]+1;
-		if (ai_build_up) {
-			maxcol = maxcol - 2;
-		}
+		int maxcol = trycols(block, rot);
 		for (int col=0; col<maxcol; col++) {
 			board_copy(copy, board);
 			block_drop(block, rot, copy, col);
@@ -115,11 +126,8 @@ MoveSet *move_all(Block *block) {
 	int length = 0;
 
 	for (int rot=0; rot<block->nr; rot++) {
-		int trycols = BOARD_WIDTH-block->w[rot]+1;
-		if (ai_build_up) {
-			trycols = trycols - 2;
-		}
-		length += trycols;
+		int maxcol = trycols(block, rot);
+		length += maxcol;
 	}
 
 	ms->length = length;
@@ -128,11 +136,8 @@ MoveSet *move_all(Block *block) {
 
 	int moveno = 0;
 	for (int rot=0; rot<block->nr; rot++) {
-		int trycols = BOARD_WIDTH-block->w[rot]+1;
-		if (ai_build_up) {
-			trycols = trycols - 2;
-		}
-		for (int col=0; col<trycols; col++) {
+		int maxcol = trycols(block, rot);
+		for (int col=0; col<maxcol; col++) {
 			Move *current = &ms->moves[moveno];
 			current->col = col;
 			current->rot = rot;
