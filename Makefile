@@ -5,7 +5,7 @@ CC=gcc
 all: bin/ai_demo bin/play
 
 bin/ai_demo: ai_demo.c $(OBJS) common.h
-	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo
+	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo -L/usr/include
 
 bin/play: play.c $(OBJS) Interaction.o common.h
 	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play -lgdi32

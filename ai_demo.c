@@ -1,14 +1,17 @@
 #include "Block.h"
 #include "AI.h"
-#include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 int random_blockno() {
 	return rand() % 7;
 }
 
 int main(void) {
+	struct timespec ts;
+	ts.tv_sec=0;
+	ts.tv_nsec=100000000L;
+
 	srand(time(NULL));
 	Board b = board_create();
 	int cleared = 0;
@@ -23,7 +26,7 @@ int main(void) {
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
 		//move_print(best);
 		move_execute(best, b);
-
+		board_print(b);
 		move_destroy(best);
 
 		if (board_dead(b)) {
@@ -36,7 +39,9 @@ int main(void) {
 		cleared += board_collapse(b);
 
 		queue[0] = queue[1];
+		nanosleep(&ts);
 	}
+
 	board_print(b);
 	printf("%d cleared\n", cleared);
 	board_destroy(b);
