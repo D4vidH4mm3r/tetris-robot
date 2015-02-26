@@ -46,15 +46,20 @@ void move_send(Move *move) {
 
 	int moves_right = move->col - move->block->offset[move->rot];
 	if (moves_right > 0) {
-		for (int i=0; i<moves_right; i++) { press_key('D'); }
+		for (int i=0; i<moves_right; i++) {
+			press_key('D');
+		}
 	} else {
-		for (int i=0; i<(-moves_right); i++) { press_key('A'); }
+		for (int i=0; i<(-moves_right); i++) {
+			press_key('A');
+		}
 	}
 	press_key('E');
 }
 
 Color guess_color(RGBColor c) {
-	int high = 98;
+	int high = 160;
+	int low  = 60;
 	if (c.red>high) {
 		if (c.green>high) {
 			if (c.blue>high) {
@@ -83,7 +88,11 @@ Color guess_color(RGBColor c) {
 			if (c.blue>high) {
 				return BLUE;
 			} else {
-				return 0;
+				if (c.red > low && c.green > low && c.blue > low) {
+					return GREY;
+				} else {
+					return 0;
+				}
 			}
 		}
 	}
@@ -97,12 +106,13 @@ Color color_at_point(Point p) {
 void copy_to_board(Board board, Point NW, Point SE, int lines) {
 	/* entire board should be inside NW - SE
 	 * lines is number of lines from bottom to copy */
-	int bsize = (NW.y-SE.y)/BOARD_HEIGHT;
+	int by = (SE.y-NW.y)/BOARD_HEIGHT;
+	int bx = (SE.x-NW.x)/BOARD_WIDTH;
 	HDC _hdc = GetDC(NULL);
 	for (int row=BOARD_HEIGHT-lines; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			int x = NW.x + col*bsize;
-			int y = NW.y + row*bsize;
+			int x = NW.x + col*bx + 0.5*bx;
+			int y = NW.y + row*by + 0.5*by;
 			COLORREF _color = GetPixel(_hdc, x, y);
 			RGBColor color = {GetRValue(_color),
 				GetGValue(_color),
