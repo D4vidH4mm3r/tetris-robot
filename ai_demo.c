@@ -2,6 +2,7 @@
 #include "AI.h"
 #include <sys/time.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define STACKING 0
 
@@ -9,10 +10,15 @@ int random_blockno() {
 	return rand() % 7;
 }
 
-int main(void) {
+int main(int argc, char const *argv[]) {
+	long to_place = 2000L;
+	if (argc > 1) {
+		to_place = atol(argv[1]);
+	}
+
 	struct timespec ts;
 	ts.tv_sec=0;
-	ts.tv_nsec=100000000L;
+	ts.tv_nsec=10000000L;
 
 	srand(time(NULL));
 	Board b = board_create();
@@ -26,13 +32,13 @@ int main(void) {
 	ai_build_up = 1;
 #endif
 
-	for (int i=0; i<2000; i++) {
+	for (long i=0; i<to_place; i++) {
 		queue[1] = *blocks[random_blockno()];
 
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
 		move_execute(best, b);
 		move_destroy(best);
-		//board_print(b);
+		board_print(b);
 
 #if STACKING
 		if (score_height(b) > 85) {
@@ -54,7 +60,7 @@ int main(void) {
 		cleared += board_collapse(b);
 
 		queue[0] = queue[1];
-		//nanosleep(&ts);
+		nanosleep(&ts);
 	}
 
 	board_print(b);
