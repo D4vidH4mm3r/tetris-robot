@@ -10,6 +10,9 @@ bin/ai_demo: ai_demo.c $(OBJS) common.h
 bin/play: play.c $(OBJS) Interaction.o common.h
 	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play -lgdi32
 
+bin/watch: watch.c $(OBJS) Interaction.o common.h
+	$(CC) $(CFLAGS) $(OBJS) Interaction.o watch.c -o bin/watch -lgdi32
+
 Interaction.o: Interaction.h Interaction.c $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -c Interaction.c $(LDFLAGS)
 
