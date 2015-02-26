@@ -7,6 +7,9 @@ all: bin/ai_demo bin/play
 bin/ai_demo: ai_demo.c $(OBJS) common.h
 	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo -L/usr/include
 
+bin/test: test.c $(OBJS) common.h
+	$(CC) $(CFLAGS) $(OBJS) test.c -o bin/test
+
 bin/play: play.c $(OBJS) Interaction.o common.h
 	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play -lgdi32
 

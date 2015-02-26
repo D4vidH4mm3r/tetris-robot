@@ -3,26 +3,23 @@
 int ai_build_up = 0;
 
 void score_sweep(Board board, ScoreSet *score) {
-	int block_seen[BOARD_WIDTH];
-	for (int i=0; i<BOARD_WIDTH; i++) {
-		block_seen[i] = BOARD_HEIGHT;
-	}
+	int col_height[BOARD_WIDTH] = {0};
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
-			if ((row < block_seen[col]) && board[row][col]) {
-				block_seen[col] = row;
+			if (!col_height[col] && board[row][col]) {
+				col_height[col] = BOARD_HEIGHT - row;
 			}
 		}
 	}
 
 	int height = 0;
 	for (int col=0; col<BOARD_WIDTH; col++) {
-		height += (BOARD_HEIGHT-block_seen[col]);
+		height += col_height[col];
 	}
 
 	int bumps = 0;
 	for (int col=0; col<BOARD_WIDTH-1; col++) {
-		bumps += abs(block_seen[col] - block_seen[col+1]);
+		bumps += abs(col_height[col] - col_height[col+1]);
 	}
 
 	score->height_total = height;

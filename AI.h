@@ -29,6 +29,9 @@ typedef struct ScoreSet_t {
 } ScoreSet;
 
 double score_total(Board board);
+void score_sweep(Board board, ScoreSet *score);
+int score_holes(Board board);
+int score_cleared(Board board);
 
 Move *move_best(Board board, Block *blocks);
 MoveSet *move_all(Block *block);

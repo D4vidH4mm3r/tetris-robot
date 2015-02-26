@@ -32,7 +32,7 @@ int main(void) {
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
 		move_execute(best, b);
 		move_destroy(best);
-		board_print(b);
+		//board_print(b);
 
 #if STACKING
 		if (score_height(b) > 85) {
@@ -54,7 +54,7 @@ int main(void) {
 		cleared += board_collapse(b);
 
 		queue[0] = queue[1];
-		nanosleep(&ts);
+		//nanosleep(&ts);
 	}
 
 	board_print(b);

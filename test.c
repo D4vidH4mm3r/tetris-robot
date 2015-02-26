@@ -5,8 +5,12 @@
 #include <unistd.h>
 
 void score_summary(Board board) {
-	printf("Agg. height: %li, bumps: %li\n Cleared: %li, holes: %li\n Total: %f\n",
-			score_height(board), score_bumps(board), score_cleared(board), score_holes(board), score_total(board));
+	ScoreSet score;
+	score.cleared = score_cleared(board);
+	score.holes = score_holes(board);
+	score_sweep(board, &score);
+	printf("Agg. height: %d, bumps: %d\n Cleared: %d, holes: %d\n Total: %f\n",
+			score.height_total, score.bumps, score.cleared, score.holes);
 }
 
 int main(void) {
