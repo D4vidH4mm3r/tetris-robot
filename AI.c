@@ -75,8 +75,8 @@ long score_bumps(Board board) {
 double score_total(Board board) {
 	/* here, weighting is important; higher is better */
 	if (ai_build_up) {
-		return score_holes(board)*(-1.0)
-			+ score_height(board)*(-0.3)
+		return score_holes(board)*(-5.0)
+			+ score_height(board)*(+0.1)
 			+ score_bumps(board)*(-0.3);
 	} else {
 		return score_cleared(board)*0.99275
@@ -91,11 +91,7 @@ void move_execute(Move *move, Board board) {
 }
 
 int trycols(Block *b, int rot) {
-	if (ai_build_up) {
-		return BOARD_WIDTH - b->w[rot]-1;
-	} else {
-		return BOARD_WIDTH - b->w[rot]+1;
-	}
+	return BOARD_WIDTH - b->w[rot]+1;
 }
 
 Move *move_best(Board board, Block *block) {
