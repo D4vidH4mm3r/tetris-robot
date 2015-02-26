@@ -53,9 +53,9 @@ double score_total(Board board) {
 	score.cleared = score_cleared(board);
 	score_sweep(board, &score);
 	if (ai_build_up) {
-		return score.holes*(-5.0)
-			+ score.height_total*(+0.1)
-			+ score.bumps*(-0.3);
+		return score.holes*(-3.0)
+			+ score.height_total*(+0.2)
+			+ score.bumps*(-0.5);
 	} else {
 		return score.cleared*0.99275
 			+ score.holes*(-0.46544)
@@ -69,6 +69,9 @@ void move_execute(Move *move, Board board) {
 }
 
 int trycols(Block *b, int rot) {
+	if (ai_build_up) {
+		return BOARD_WIDTH - b->w[rot]-1;
+	}
 	return BOARD_WIDTH - b->w[rot]+1;
 }
 

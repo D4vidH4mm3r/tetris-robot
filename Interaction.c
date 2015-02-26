@@ -7,12 +7,11 @@ void press_key(char key) {
 	ip.ki.time = 0;
 	ip.ki.dwExtraInfo = 0;
 
-	Sleep(20);
 	ip.ki.wVk = key;
 	ip.ki.dwFlags = 0;
 	SendInput(1, &ip, sizeof(INPUT));
 
-	Sleep(12);
+	Sleep(15);
 	ip.ki.wVk = key;
 	ip.ki.dwFlags = KEYEVENTF_KEYUP;
 	SendInput(1, &ip, sizeof(INPUT));
@@ -35,12 +34,15 @@ void move_send(Move *move) {
 			break;
 		case 1:
 			press_key('W');
+			Sleep(20);
 			break;
 		case 2:
 			press_key('F');
+			Sleep(20);
 			break;
 		case 3:
 			press_key('S');
+			Sleep(20);
 			break;
 	}
 
@@ -48,10 +50,12 @@ void move_send(Move *move) {
 	if (moves_right > 0) {
 		for (int i=0; i<moves_right; i++) {
 			press_key('D');
+			Sleep(20);
 		}
 	} else {
 		for (int i=0; i<(-moves_right); i++) {
 			press_key('A');
+			Sleep(20);
 		}
 	}
 	press_key('E');
