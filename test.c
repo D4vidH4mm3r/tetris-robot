@@ -7,7 +7,6 @@
 void score_summary(Board board) {
 	ScoreSet score;
 	score.cleared = score_cleared(board);
-	score.holes = score_holes(board);
 	score_sweep(board, &score);
 	printf("Agg. height: %d, bumps: %d\n Cleared: %d, holes: %d\n Total: %f\n",
 			score.height_total, score.bumps, score.cleared, score.holes);

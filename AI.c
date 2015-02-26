@@ -4,10 +4,13 @@ int ai_build_up = 0;
 
 void score_sweep(Board board, ScoreSet *score) {
 	int col_height[BOARD_WIDTH] = {0};
+	int holes = 0;
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
 			if (!col_height[col] && board[row][col]) {
 				col_height[col] = BOARD_HEIGHT - row;
+			} else if (col_height[col] && !board[row][col]) {
+				holes++;
 			}
 		}
 	}
@@ -22,23 +25,9 @@ void score_sweep(Board board, ScoreSet *score) {
 		bumps += abs(col_height[col] - col_height[col+1]);
 	}
 
-	score->height_total = height;
 	score->bumps = bumps;
-}
-
-int score_holes(Board board) {
-	int has_been_block[BOARD_WIDTH] = {0};
-	int holes = 0;
-	for (int row=0; row<BOARD_HEIGHT; row++) {
-		for (int col=0; col<BOARD_WIDTH; col++) {
-			if (board[row][col]) {
-				has_been_block[col] = 1;
-			} else if (has_been_block[col]) {
-				holes++;
-			}
-		}
-	}
-	return holes;
+	score->height_total = height;
+	score->holes = holes;
 }
 
 int score_cleared(Board board ) {
@@ -62,7 +51,6 @@ double score_total(Board board) {
 	/* here, weighting is important; higher is better */
 	ScoreSet score;
 	score.cleared = score_cleared(board);
-	score.holes = score_holes(board);
 	score_sweep(board, &score);
 	if (ai_build_up) {
 		return score.holes*(-5.0)
