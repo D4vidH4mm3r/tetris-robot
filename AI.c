@@ -2,7 +2,7 @@
 
 int ai_build_up = 0;
 
-long score_height(Board board) {
+int score_height(Board board) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
 		block_seen[i] = BOARD_HEIGHT;
@@ -14,16 +14,16 @@ long score_height(Board board) {
 			}
 		}
 	}
-	long height = 0;
+	int height = 0;
 	for (int col=0; col<BOARD_WIDTH; col++) {
 		height += (BOARD_HEIGHT-block_seen[col]);
 	}
 	return height;
 }
 
-long score_holes(Board board) {
+int score_holes(Board board) {
 	int has_been_block[BOARD_WIDTH] = {0};
-	long holes = 0;
+	int holes = 0;
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		for (int col=0; col<BOARD_WIDTH; col++) {
 			if (board[row][col]) {
@@ -36,8 +36,8 @@ long score_holes(Board board) {
 	return holes;
 }
 
-long score_cleared(Board board ) {
-	long cleared = 0;
+int score_cleared(Board board ) {
+	int cleared = 0;
 	for (int row=0; row<BOARD_HEIGHT; row++) {
 		int clears = 1;
 		for (int col=0; col<BOARD_WIDTH; col++) {
@@ -52,7 +52,7 @@ long score_cleared(Board board ) {
 	return cleared;
 }
 
-long score_bumps(Board board) {
+int score_bumps(Board board) {
 	int block_seen[BOARD_WIDTH];
 	for (int i=0; i<BOARD_WIDTH; i++) {
 		block_seen[i] = BOARD_HEIGHT;
@@ -64,7 +64,7 @@ long score_bumps(Board board) {
 			}
 		}
 	}
-	long bumps = 0;
+	int bumps = 0;
 	for (int col=0; col<BOARD_WIDTH-1; col++) {
 		bumps += abs(block_seen[col] - block_seen[col+1]);
 	}
@@ -74,15 +74,20 @@ long score_bumps(Board board) {
 /* values from https://codemyroad.wordpress.com/2013/04/14/tetris-ai-the-near-perfect-player/ */
 double score_total(Board board) {
 	/* here, weighting is important; higher is better */
+	ScoreSet score;
+	score.bumps = score_bumps(board);
+	score.cleared = score_cleared(board);
+	score.height_total = score_height(board);
+	score.holes = score_holes(board);
 	if (ai_build_up) {
-		return score_holes(board)*(-5.0)
-			+ score_height(board)*(+0.1)
-			+ score_bumps(board)*(-0.3);
+		return score.holes*(-5.0)
+			+ score.height_total*(+0.1)
+			+ score.bumps*(-0.3);
 	} else {
-		return score_cleared(board)*0.99275
-			+ score_holes(board)*(-0.46544)
-			+ score_height(board)*(-0.66569)
-			+ score_bumps(board)*(-0.24077);
+		return score.cleared*0.99275
+			+ score.holes*(-0.46544)
+			+ score.height_total*(-0.66569)
+			+ score.bumps*(-0.24077);
 	}
 }
 

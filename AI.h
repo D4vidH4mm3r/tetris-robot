@@ -20,10 +20,14 @@ typedef struct MoveSet_t {
 	Move *moves;
 } MoveSet;
 
-long score_height(Board board);
-long score_holes(Board board);
-long score_cleared(Board board);
-long score_bumps(Board board);
+typedef struct ScoreSet_t {
+	int height_total;
+	int height_max;
+	int bumps;
+	int cleared;
+	int holes;
+} ScoreSet;
+
 double score_total(Board board);
 
 Move *move_best(Board board, Block *blocks);
