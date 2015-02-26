@@ -3,6 +3,8 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
+#define STACKING 0
+
 int random_blockno() {
 	return rand() % 7;
 }
@@ -20,14 +22,19 @@ int main(void) {
 	Block *queue = malloc(2*sizeof(Block));
 	queue[0] = *blocks[random_blockno()];
 
+#if STACKING
 	ai_build_up = 1;
+#endif
+
 	for (int i=0; i<2000; i++) {
 		queue[1] = *blocks[random_blockno()];
 
 		Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
-		//move_print(best);
 		move_execute(best, b);
+		move_destroy(best);
 		board_print(b);
+
+#if STACKING
 		if (score_height(b) > 85) {
 			printf("Switching to destroy\n");
 			ai_build_up = 0;
@@ -35,7 +42,7 @@ int main(void) {
 			printf("Switching to build\n");
 			ai_build_up = 1;
 		}
-		move_destroy(best);
+#endif
 
 		if (board_dead(b)) {
 			board_print(b);
