@@ -35,10 +35,9 @@ int main(int argc, char const *argv[]) {
       std::cout << std::endl;
     }
 
-    Move *best = move_best_lookahead(board, &queue[0], &queue[1]);
-    std::cout << "Best loc/rot: " << best->col << "/" << best->rot << std::endl;
-    move_execute(best, board);
-    move_destroy(best);
+    Move best = move_best_lookahead(board, &queue[0], &queue[1]);
+    std::cout << "Best loc/rot: " << best.col << "/" << best.rot << std::endl;
+    best.execute(board);
 
     if (board.dead()) {
       std::cout << board << std::endl;

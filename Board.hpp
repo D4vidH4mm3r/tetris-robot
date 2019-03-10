@@ -11,7 +11,7 @@ public:
   std::vector<std::vector<short> > M;
   Board(): M(BOARD_HEIGHT, std::vector<short>(BOARD_WIDTH)) {};
 
-  void block_addblock(Block *block, int rot, int row, int col) {
+  void block_addblock(const Block *block, int rot, int row, int col) {
     for (int i=0; i<4; i++) {
       for (int j=0; j<4; j++) {
         if (block->m[rot][i][j]) {
@@ -25,7 +25,7 @@ public:
     return std::any_of(M[0].begin(), M[0].end(), [](short v) {return v!=0;});
   }
 
-  int block_touches(Block *block, int rot, int row, int col) {
+  int block_touches(const Block *block, int rot, int row, int col) {
     for (int i=0; i<4; i++) {
       for (int j=0; j<4; j++) {
         if (block->m[rot][i][j] && (i+row+1>=BOARD_HEIGHT || M[i+row+1][col+j])) {
@@ -36,7 +36,7 @@ public:
     return 0;
   }
 
-  int block_hits_row(Block *block, int rot, int col) {
+  int block_hits_row(const Block *block, int rot, int col) {
     int row = 0;
     while (!block_touches(block, rot, row, col)) {
       row++;
@@ -66,7 +66,7 @@ public:
     return offset;
   };
 
-  void block_drop(Block *block, int rot, int col) {
+  void block_drop(const Block *block, int rot, int col) {
     block_addblock(block, rot, block_hits_row(block, rot, col), col);
   }
 };

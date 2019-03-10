@@ -1,40 +1,31 @@
 #ifndef _ai_def
 #define _ai_def
 
-#include <stdio.h>
-#include <float.h>
+#include <cfloat>
 #include "Board.hpp"
 
-typedef struct Move_t {
-  Block *block;
-  double value;
+class Move {
+public:
+  const Block* block;
   int rot;
   int col;
-  struct Move_t *prev;
-} Move;
-
-typedef struct MoveSet_t {
-  Block *block;
-  int length;
-  Move *moves;
-} MoveSet;
-
-void move_copy(Move *to, Move *from) {
-  to->block = from->block;
-  to->value = from->value;
-  to->rot   = from->rot;
-  to->col   = from->col;
-  to->prev  = from->prev;
-}
-
-void move_destroy(Move *move) {
-  free(move);
-}
-
-void moveset_destroy(MoveSet *moves) {
-  free(moves->moves);
-  free(moves);
-}
+  double score;
+  void execute(Board& board) {
+    board.block_drop(block, rot, col);
+  };
+  Move(Block* b) {
+    block = b;
+    rot = -1;
+    col = -1;
+    score = -DBL_MAX;
+  }
+  Move(Block* b, int r, int c) {
+    block = b;
+    rot = r;
+    col = c;
+    score = -DBL_MAX;
+  }
+};
 
 typedef struct ScoreSet_t {
   int height_total;
@@ -100,88 +91,54 @@ double score_total(Board board) {
     + score.bumps*(-0.24077);
 }
 
-void move_execute(Move *move, Board& board) {
-  board.block_drop(move->block, move->rot, move->col);
-}
-
 int trycols(Block *b, int rot) {
   return BOARD_WIDTH - b->w[rot]+1;
 }
 
-Move *move_best(Board board, Block *block) {
-  Move *best = new Move;
-  best->value = -DBL_MAX;
-  best->block = block;
+Move move_best(Board board, Block *block) {
+  Move bestMove(block);
   for (int rot=0; rot<block->nr; rot++) {
     int maxcol = trycols(block, rot);
     for (int col=0; col<maxcol; col++) {
       Board copy(board);
       copy.block_drop(block, rot, col);
       double score = score_total(copy);
-      if (score > best->value) {
-        best->value = score;
-        best->col = col;
-        best->rot = rot;
+      if (score > bestMove.score) {
+        bestMove.score = score;
+        bestMove.col = col;
+        bestMove.rot = rot;
       }
     }
   }
-  return best;
+  return bestMove;
 }
 
-MoveSet *move_all(Block *block) {
-  /* NOTE: angiver ikke korrekt value */
-  MoveSet *ms = new MoveSet;
-  int length = 0;
-
-  for (int rot=0; rot<block->nr; rot++) {
-    int maxcol = trycols(block, rot);
-    length += maxcol;
-  }
-
-  ms->length = length;
-  ms->moves = (Move*)malloc(length*sizeof(Move));
-  ms->block = block;
-
-  int moveno = 0;
+std::vector<Move> all_moves(Block *block) {
+  std::vector<Move> res;
   for (int rot=0; rot<block->nr; rot++) {
     int maxcol = trycols(block, rot);
     for (int col=0; col<maxcol; col++) {
-      Move *current = &ms->moves[moveno];
-      current->col = col;
-      current->rot = rot;
-      current->block = block;
-      current->value = 0;
-      moveno++;
+      res.emplace_back(block, rot, col);
     }
   }
-  return ms;
+  return res;
 }
 
-Move *move_best_lookahead(Board board, Block *current, Block *next) {
-  MoveSet *first_moves = move_all(current); // all moves with first block
-  Move *best = new Move; // best move with second block
-  best->value = -DBL_MAX;
-  best->block = next;
+Move move_best_lookahead(Board board, Block *current, Block *next) {
+  std::vector<Move> firstMoves = all_moves(current);
+  Move bestFirstMove(current);
+  Move bestSecondMove(next);
 
-  for (int i=0; i<first_moves->length; i++) {
+  for (auto firstMove : firstMoves) {
     Board copy(board);
-    Move *current = &first_moves->moves[i];
-    move_execute(current, copy);
-    Move *best_next = move_best(copy, best->block);
-    if (best_next->value > best->value) {
-      move_copy(best, best_next);
-      best->prev = current;
+    firstMove.execute(copy);
+    Move candidateSecondMove = move_best(copy, next);
+    if (candidateSecondMove.score > bestSecondMove.score) {
+      bestSecondMove = candidateSecondMove;
+      bestFirstMove = firstMove;
     }
-    move_destroy(best_next);
   }
-
-  move_copy(best, best->prev);
-  moveset_destroy(first_moves);
-  return best;
-}
-
-void move_print(Move *m) {
-  printf("Rotate %d times and drop col %d for %f value\n", m->rot, m->col, m->value);
+  return bestFirstMove;
 }
 
 #endif
