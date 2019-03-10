@@ -1,3 +1,6 @@
+NOTE: The readme is currently outdated.  I don't have Cultris available right now and am just
+rewriting parts of this for fun.
+
 This is a very basic AI for some Tetris-like game.
 
 The basic logic of the game (only a subset is implemented) needed by the AI is in Block and Board.
@@ -5,7 +8,7 @@ The AI is of course in AI.  Some common defines (colours and size of board) are 
 
 There are currently two programs (discounting the test):
 
-* `ai\_demo` just simulates some tetris game, using the AI to place 2000 random blocks
+* `ai_demo` just simulates some tetris game, using the AI to place 2000 random blocks
 * `play` attempts to play Cultris II (training / versus against bots)
 
 Most of the code is just ordinary C99 with no interesting dependencies.  `play` currently uses some
