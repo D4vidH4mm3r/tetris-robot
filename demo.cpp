@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
   std::mt19937 rng(rd());
   std::uniform_int_distribution<int> uni(0, 6);
 
-  Board b;
+  Board board;
   int cleared = 0;
 
   Block *blocks[7] = {&block_O, &block_I, &block_L, &block_Lr, &block_Z, &block_Zr, &block_T};
@@ -25,29 +25,34 @@ int main(int argc, char const *argv[]) {
 
   for (long i=0; i<to_place; i++) {
     queue[1] = *blocks[uni(rng)];
+    std::cout << board << std::endl;
+    for (int bi=0; bi<4; ++bi) {
+      for (int preview=0; preview<2; ++preview) {
+        for (int bj=0; bj<4; ++bj) {
+          std::cout << brickToString(queue[preview].m[0][bi][bj]);
+        }
+      }
+      std::cout << std::endl;
+    }
 
-    Move *best = move_best_lookahead(b, &queue[0], &queue[1]);
-    std::cout << "Dropping " << queue[0].c << std::endl;
+    Move *best = move_best_lookahead(board, &queue[0], &queue[1]);
     std::cout << "Best loc/rot: " << best->col << "/" << best->rot << std::endl;
-    move_execute(best, b);
+    move_execute(best, board);
     move_destroy(best);
-    std::cout << b << std::endl;
 
-    /*
-    if (board_dead(b)) {
-      std::cout << b << std::endl;
+    if (board.dead()) {
+      std::cout << board << std::endl;
       printf("%d cleared\n", cleared);
       printf("Dead :(\n");
-      b = board_create();
+      break;
     }
-    */
-    cleared += b.collapse();
+    cleared += board.collapse();
 
     queue[0] = queue[1];
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 
-  std::cout << b << std::endl;
+  std::cout << board << std::endl;
   printf("%d cleared\n", cleared);
   free(queue);
   return 0;

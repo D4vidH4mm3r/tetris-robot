@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <float.h>
-#include "common.h"
 #include "Board.hpp"
 
 typedef struct Move_t {

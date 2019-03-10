@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
-#include "common.h"
 #include "Block.hpp"
 
 class Board {
@@ -16,10 +15,14 @@ public:
     for (int i=0; i<4; i++) {
       for (int j=0; j<4; j++) {
         if (block->m[rot][i][j]) {
-          M[row+i][col+j] = block->c;
+          M[row+i][col+j] = block->m[rot][i][j];
         }
       }
     }
+  }
+
+  bool dead() {
+    return std::any_of(M[0].begin(), M[0].end(), [](short v) {return v!=0;});
   }
 
   int block_touches(Block *block, int rot, int row, int col) {
@@ -69,40 +72,10 @@ public:
 };
 
 std::ostream& operator<< (std::ostream& os, const Board& b) {
-  for (int row=0; row<b.M.size(); ++row) {
+  for (int row=0; row<BOARD_HEIGHT; ++row) {
     os << "|";
-    for (int col=0; col<b.M[row].size(); ++col) {
-      if (b.M[row][col]) {
-        switch (b.M[row][col]) {
-        case BLUE:
-          os << "\x1B[34m";
-          break;
-        case TEAL:
-          os << "\x1B[36m";
-          break;
-        case YELLOW:
-          os << "\x1B[33m";
-          break;
-        case MAGENTA:
-          os << "\x1B[35m";
-          break;
-        case GREEN:
-          os << "\x1B[32m";
-          break;
-        case RED:
-          os << "\x1B[31m";
-          break;
-        case WHITE:
-          os << "\x1B[37m";
-          break;
-        case GREY:
-          os << "\x1B[40m";
-          break;
-        }
-        os << "#\x1B[0m";
-      } else {
-        os << " ";
-      }
+    for (int col=0; col<BOARD_WIDTH; ++col) {
+      os << brickToString(b.M[row][col]);
     }
     os << "|\n";
   }
