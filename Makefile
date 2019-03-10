@@ -1,22 +1,22 @@
-CFLAGS = -std=c99 -Ofast -march=native -flto -fwhole-program
-OBJS = Block.o AI.o Board.o
-CC=gcc
+CFLAGS = -std=c++17
+#-Ofast -march=native -flto -fwhole-program
+CC=g++
 
 all: bin/ai_demo bin/play
 
-bin/ai_demo: ai_demo.c $(OBJS) common.h
-	$(CC) $(CFLAGS) $(OBJS) ai_demo.c -o bin/ai_demo -L/usr/include
+bin/ai_demo: demo.cpp common.h Board.hpp AI.hpp
+	$(CC) $(CFLAGS) $(OBJS) demo.cpp -o bin/ai_demo
 
-bin/test: test.c $(OBJS) common.h
-	$(CC) $(CFLAGS) $(OBJS) test.c -o bin/test
+bin/test: test.cpp common.h Board.hpp
+	$(CC) $(CFLAGS) $(OBJS) test.cpp -o bin/test
 
-bin/play: play.c $(OBJS) Interaction.o common.h
+bin/play: play.c Interaction.o common.h
 	$(CC) $(CFLAGS) $(OBJS) Interaction.o play.c -o bin/play -lgdi32
 
-bin/watch: watch.c $(OBJS) Interaction.o common.h
+bin/watch: watch.c Interaction.o common.h
 	$(CC) $(CFLAGS) $(OBJS) Interaction.o watch.c -o bin/watch -lgdi32
 
-Interaction.o: Interaction.h Interaction.c $(OBJS)
+Interaction.o: Interaction.h Interaction.c
 	$(CC) $(CFLAGS) $(OBJS) -c Interaction.c $(LDFLAGS)
 
 clean:
